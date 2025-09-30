@@ -73,10 +73,7 @@ flowchart LR
 
 -   **Databases**: PostgreSQL, MongoDB
 -   **Message Broker**: Kafka
--   **Observability**: Prometheus, Grafana, Jaeger
--   **Logging**: Loki (alternative to ELK for simplicity)
 -   **Containerization**: Docker
--   **CI/CD**: GitHub Actions
 
 ------------------------------------------------------------------------
 
