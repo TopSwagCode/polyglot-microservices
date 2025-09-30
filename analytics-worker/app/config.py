@@ -4,7 +4,7 @@ from typing import Optional
 class Settings:
     # MongoDB Configuration
     MONGODB_URL: str = os.getenv("MONGODB_URL", "mongodb://root:secret@mongo:27017")
-    DATABASE_NAME: str = os.getenv("DATABASE_NAME", "analytics_db")
+    DATABASE_NAME: str = os.getenv("DATABASE_NAME", "analytics")
     
     # Kafka Configuration
     KAFKA_BOOTSTRAP_SERVERS: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
