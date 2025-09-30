@@ -195,14 +195,17 @@ Authorization: Bearer {{login.response.body.token}}
 
 ###
 
-###
-### Test Notes:
-### 1. Make sure Docker containers are running: docker compose up --build -d
-### 2. API Gateway runs on port 8080
-### 3. Use {{$timestamp}} for unique usernames in registration tests
-### 4. The login response token is automatically captured for protected endpoint tests
-### 5. Task service requires authentication - requests are enriched with X-User-Id and X-Username headers
-### 6. User isolation: Users can only see/modify their own projects and tasks
-### 7. Kafka events are published for task creation and updates
-### 8. Run tests in order: register -> login -> create project -> create task -> other operations
-###
+GET {{gateway_host}}/analytics/dashboard
+Authorization: Bearer {{login.response.body.token}}
+
+### Get Task Summary via API Gateway  
+GET {{gateway_host}}/analytics/tasks/summary
+Authorization: Bearer {{login.response.body.token}}
+
+### Get Productivity via API Gateway
+GET {{gateway_host}}/analytics/productivity
+Authorization: Bearer {{login.response.body.token}}
+
+### Get Project Analytics via API Gateway
+GET {{gateway_host}}/analytics/projects/1
+Authorization: Bearer {{login.response.body.token}}

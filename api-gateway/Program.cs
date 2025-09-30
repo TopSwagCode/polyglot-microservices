@@ -83,17 +83,17 @@ app.MapReverseProxy(proxyPipeline =>
 {
     proxyPipeline.Use(async (context, next) =>
     {
-        // Check if this is an analytics request
-        if (context.Request.Path.StartsWithSegments("/analytics"))
-        {
-            // Analytics endpoints require Admin role
-            if (!context.User.IsInRole("Admin"))
-            {
-                context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                await context.Response.WriteAsync("Forbidden: Admin role required for analytics endpoints");
-                return;
-            }
-        }
+        // Check if this is an analytics request Maybe make something else only for admins :)
+        // if (context.Request.Path.StartsWithSegments("/analytics"))
+        // {
+        //     // Analytics endpoints require Admin role
+        //     if (!context.User.IsInRole("Admin"))
+        //     {
+        //         context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        //         await context.Response.WriteAsync("Forbidden: Admin role required for analytics endpoints");
+        //         return;
+        //     }
+        // }
 
         // Add headers for authenticated users
         if (context.User.Identity?.IsAuthenticated == true)

@@ -14,7 +14,7 @@ class AnalyticsService:
 
     def _get_db(self):
         """Get database instance"""
-        if not self.db:
+        if self.db is None:
             self.db = get_database()
         return self.db
 
@@ -24,7 +24,7 @@ class AnalyticsService:
         
         # Get user metrics
         user_metrics = await db.user_metrics.find_one({"user_id": user_id})
-        if not user_metrics:
+        if user_metrics is None:
             return {
                 "total_tasks": 0,
                 "completed_tasks": 0,
@@ -67,7 +67,7 @@ class AnalyticsService:
             "user_id": user_id
         })
         
-        if not project_metrics:
+        if project_metrics is None:
             return None
 
         # Get task events for timeline
@@ -108,7 +108,7 @@ class AnalyticsService:
         db = self._get_db()
         
         user_metrics = await db.user_metrics.find_one({"user_id": user_id})
-        if not user_metrics:
+        if user_metrics is None:
             return {
                 "total_tasks": 0,
                 "completed_tasks": 0,
