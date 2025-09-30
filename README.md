@@ -43,40 +43,39 @@ flowchart LR
 
 ## 🔹 Services
 
-### API Gateway (.NET 8, YARP)
+### API Gateway (.NET 9, YARP)
 
--   Routes requests to internal services\
+-   Routes requests to internal services
 -   Handles JWT authentication & rate limiting
 
-### Auth Service (.NET 8)
+### Auth Service (.NET 9)
 
--   User registration & authentication\
--   Issues JWT tokens\
+-   User registration & authentication
+-   Issues JWT tokens
 -   Stores user data in PostgreSQL
 
 ### Task Service (Go)
 
--   Manages projects and tasks (CRUD)\
--   Publishes events (`task_created`, `task_updated`) to Kafka/NATS\
+-   Manages projects and tasks (CRUD)
+-   Publishes events (`task_created`, `task_updated`) to Kafka
 -   Stores data in PostgreSQL
 
 ### Analytics Service (Python, FastAPI)
 
--   Consumes events from Kafka/NATS\
--   Computes analytics (task counts, completion times, etc.)\
--   Stores results in MongoDB\
+-   Consumes events from Kafka
+-   Computes analytics (task counts, completion times, etc.)
+-   Stores results in MongoDB
 -   Exposes REST API for dashboards
 
 ------------------------------------------------------------------------
 
 ## 🔹 Infrastructure
 
--   **Databases**: PostgreSQL, MongoDB\
--   **Message Broker**: Kafka (or NATS for lighter setup)\
--   **Observability**: Prometheus, Grafana, Jaeger\
--   **Logging**: Loki (alternative to ELK for simplicity)\
--   **Containerization**: Docker & Kubernetes (K3s/Minikube for local
-    dev)\
+-   **Databases**: PostgreSQL, MongoDB
+-   **Message Broker**: Kafka
+-   **Observability**: Prometheus, Grafana, Jaeger
+-   **Logging**: Loki (alternative to ELK for simplicity)
+-   **Containerization**: Docker
 -   **CI/CD**: GitHub Actions
 
 ------------------------------------------------------------------------
@@ -86,7 +85,7 @@ flowchart LR
 ### Prerequisites
 
 -   Docker & Docker Compose\
--   .NET 8 SDK\
+-   .NET 9 SDK\
 -   Go 1.22+\
 -   Python 3.11+
 
@@ -94,12 +93,6 @@ flowchart LR
 
 ``` bash
 docker compose up --build
-```
-
-### Kubernetes (Minikube)
-
-``` bash
-kubectl apply -f infra/k8s/
 ```
 
 ------------------------------------------------------------------------
@@ -112,25 +105,15 @@ Each service lives in its own folder:
     │── api-gateway/          # .NET API Gateway
     │── auth-service/         # .NET Auth Service
     │── task-service/         # Go Task Service
-    │── analytics-service/    # Python Analytics
-    │── infra/                # Docker Compose, K8s manifests
+    │── analytics-service/    # Python Analytics API
+    │── analytics-worker/     # Python Analytics Kafka consumer / worker
     │── docs/                 # Architecture diagrams, ADRs
     │── COPILOT_INSTRUCTIONS.md
-    │── README.md
+    │── README.md             # TODO Add rest of files :)
 
-------------------------------------------------------------------------
-
-## 🔹 Roadmap
-
--   [ ] Core services up and running with Docker Compose\
--   [ ] Event streaming with Kafka/NATS\
--   [ ] Analytics API powered by Python\
--   [ ] Observability (Prometheus, Grafana, Jaeger)\
--   [ ] CI/CD pipeline with GitHub Actions\
--   [ ] Deploy demo on Hetzner server
 
 ------------------------------------------------------------------------
 
 ## 🔹 License
 
-MIT License --- feel free to fork, extend, and learn from this project.
+ToDo :D
