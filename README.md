@@ -62,10 +62,13 @@ flowchart LR
 
 ### Analytics Service (Python, FastAPI)
 
--   Consumes events from Kafka
 -   Computes analytics (task counts, completion times, etc.)
--   Stores results in MongoDB
 -   Exposes REST API for dashboards
+
+### Analytics Worker (Python)
+
+-   Consumes events from Kafka
+-   Stores results in MongoDB
 
 ------------------------------------------------------------------------
 
