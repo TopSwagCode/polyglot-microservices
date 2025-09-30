@@ -193,11 +193,6 @@ Authorization: Bearer {{login.response.body.token}}
 GET {{gateway_host}}/analytics/dashboard
 Authorization: Bearer {{login.response.body.token}}
 
-###
-
-GET {{gateway_host}}/analytics/dashboard
-Authorization: Bearer {{login.response.body.token}}
-
 ### Get Task Summary via API Gateway  
 GET {{gateway_host}}/analytics/tasks/summary
 Authorization: Bearer {{login.response.body.token}}

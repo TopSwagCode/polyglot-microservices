@@ -7,7 +7,7 @@ This document describes the developer tools available in the polyglot microservi
 ### 1. Mongo Express (MongoDB Web UI)
 - **URL**: http://localhost:8081
 - **Purpose**: MongoDB database administration and data browsing
-- **Database**: `analytics_db` (Analytics Service data)
+- **Database**: `analytics` (Analytics Service data)
 - **Collections**: 
   - `task_events` - Kafka events consumed by Analytics Service
   - Any other analytics collections

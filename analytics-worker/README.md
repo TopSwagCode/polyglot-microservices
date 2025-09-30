@@ -34,7 +34,7 @@ The Analytics Worker is a dedicated Kafka consumer that:
 
 ```env
 MONGODB_URL=mongodb://root:secret@mongo:27017
-DATABASE_NAME=analytics_db
+DATABASE_NAME=analytics
 KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 KAFKA_GROUP_ID=analytics-worker
 KAFKA_TOPIC_TASK=task-events

@@ -22,8 +22,13 @@ class AnalyticsService:
         """Get dashboard metrics for a user"""
         db = self._get_db()
         
-        # Get user metrics
-        user_metrics = await db.user_metrics.find_one({"user_id": user_id})
+        # Try with string user_id first (most likely format in MongoDB)
+        user_metrics = await db.user_metrics.find_one({"user_id": str(user_id)})
+
+        # If not found, try with integer user_id
+        if user_metrics is None:
+            user_metrics = await db.user_metrics.find_one({"user_id": user_id})
+        
         if user_metrics is None:
             return {
                 "total_tasks": 0,
@@ -33,9 +38,9 @@ class AnalyticsService:
                 "recent_activity": []
             }
 
-        # Get recent activity (last 10 events)
+        # Get recent activity (last 10 events) - try string user_id first
         recent_events = await db.task_events.find(
-            {"user_id": user_id}
+            {"user_id": str(user_id)}
         ).sort("timestamp", -1).limit(10).to_list(10)
 
         recent_activity = [
@@ -61,27 +66,27 @@ class AnalyticsService:
         """Get analytics for a specific project"""
         db = self._get_db()
         
-        # Get project metrics
+        # Get project metrics - use string user_id
         project_metrics = await db.project_metrics.find_one({
             "project_id": project_id,
-            "user_id": user_id
+            "user_id": str(user_id)
         })
         
         if project_metrics is None:
             return None
 
-        # Get task events for timeline
+        # Get task events for timeline - use string user_id
         task_events = await db.task_events.find(
-            {"project_id": project_id, "user_id": user_id}
+            {"project_id": project_id, "user_id": str(user_id)}
         ).sort("timestamp", 1).to_list(100)
 
         # Build timeline
         timeline = [
             {
-                "event_type": event["event_type"],
+                "event_type": event["event"],
                 "task_id": event["task_id"],
                 "timestamp": event["timestamp"].isoformat(),
-                "task_title": event["task_data"].get("title", "Task")
+                "task_title": event["title"]
             }
             for event in task_events
         ]
@@ -107,7 +112,7 @@ class AnalyticsService:
         """Get task summary for a user"""
         db = self._get_db()
         
-        user_metrics = await db.user_metrics.find_one({"user_id": user_id})
+        user_metrics = await db.user_metrics.find_one({"user_id": str(user_id)})
         if user_metrics is None:
             return {
                 "total_tasks": 0,
@@ -120,16 +125,16 @@ class AnalyticsService:
 
         pending_tasks = user_metrics["total_tasks"] - user_metrics["completed_tasks"]
 
-        # Get recent completions
+        # Get recent completions - use string user_id
         recent_completions = await db.task_events.find(
-            {"user_id": user_id, "event_type": "completed"}
+            {"user_id": str(user_id), "status": "completed", "event": "task_updated"}
         ).sort("timestamp", -1).limit(5).to_list(5)
 
         recent_completions_data = [
             {
                 "task_id": event["task_id"],
                 "project_id": event["project_id"],
-                "title": event["task_data"].get("title", "Task"),
+                "title": event["title"],
                 "completed_at": event["timestamp"].isoformat()
             }
             for event in recent_completions
@@ -155,9 +160,10 @@ class AnalyticsService:
         thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
         
         task_events = await db.task_events.find({
-            "user_id": user_id,
+            "user_id": str(user_id),
             "timestamp": {"$gte": thirty_days_ago},
-            "event_type": "completed"
+            "event": "task_updated",
+            "status": "completed"
         }).to_list(1000)
 
         # Calculate daily completions
