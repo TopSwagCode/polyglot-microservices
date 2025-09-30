@@ -1,0 +1,227 @@
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Jwt__Key=docker_supersecretkey_that_is_at_least_32_characters_long
+      - Jwt__Issuer=auth-service-docker
+      - Jwt__Audience=polyglot-platform
+    depends_on:
+      - auth-service
+      - task-service
+    networks:
+      - auth-network
+
+  auth-service:
+    build: ./auth-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Default=Host=postgres;Database=authdb;Username=authuser;Password=secret
+      - Jwt__Key=docker_supersecretkey_that_is_at_least_32_characters_long
+      - Jwt__Issuer=auth-service-docker
+      - Jwt__Audience=polyglot-platform
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - auth-network
+
+  task-service:
+    build: ./task-service
+    environment:
+      - DB_DSN=host=task-postgres user=taskuser password=secret dbname=taskdb port=5432 sslmode=disable
+      - KAFKA_BROKER=kafka:9092
+      - KAFKA_TOPIC=task-events
+      - PORT=8080
+    depends_on:
+      task-postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks:
+      - auth-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: authuser
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: authdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - authdb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U authuser -d authdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - auth-network
+
+  task-postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: taskuser
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: taskdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - taskdb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskuser -d taskdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - auth-network
+
+  kafka:
+    image: bitnami/kafka:latest
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/bitnami/kafka
+    networks:
+      - auth-network
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  mongo:
+    image: mongo:7
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - auth-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  analytics-service:
+    build: ./analytics-service
+    environment:
+      - MONGODB_URL=mongodb://root:secret@mongo:27017
+      - DATABASE_NAME=analytics
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_GROUP_ID=analytics-service
+      - KAFKA_TOPIC_TASK=task-events
+      - KAFKA_TOPIC_PROJECT=project-events
+      - JWT_SECRET_KEY=docker_supersecretkey_that_is_at_least_32_characters_long
+      - JWT_ALGORITHM=HS256
+      - JWT_AUDIENCE=polyglot-platform
+      - JWT_ISSUER=auth-service-docker
+    ports:
+      - "8000:8000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks:
+      - auth-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  analytics-worker:
+    build: ./analytics-worker
+    environment:
+      - MONGODB_URL=mongodb://root:secret@mongo:27017
+      - DATABASE_NAME=analytics_db
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_GROUP_ID=analytics-worker
+      - KAFKA_TOPIC_TASK=task-events
+      - KAFKA_TOPIC_PROJECT=project-events
+    depends_on:
+      mongo:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks:
+      - auth-network
+    restart: unless-stopped
+
+  # Developer Tools
+  mongo-express:
+    image: mongo-express:1.0.0-alpha.4
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=secret
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - auth-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+      - task-postgres
+    networks:
+      - auth-network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8082:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - auth-network
+
+networks:
+  auth-network:
+    driver: bridge
+
+volumes:
+  authdb_data:
+  taskdb_data:
+  kafka_data:
+  mongo_data:

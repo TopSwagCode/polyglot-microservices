@@ -1,0 +1,50 @@
+### Analytics Service API Tests
+### Base URL configuration
+@Analytics_HostAddress = http://localhost:8000
+
+### 1. Health Check
+GET {{Analytics_HostAddress}}/health
+
+### 2. Root endpoint
+GET {{Analytics_HostAddress}}/
+
+### 3. API Documentation
+GET {{Analytics_HostAddress}}/api/v1/docs
+
+### 4. Get Dashboard (requires JWT token)
+GET {{Analytics_HostAddress}}/api/v1/analytics/dashboard
+Authorization: Bearer {{jwt_token}}
+
+### 5. Get Task Summary
+GET {{Analytics_HostAddress}}/api/v1/analytics/tasks/summary
+Authorization: Bearer {{jwt_token}}
+
+### 6. Get Productivity Insights
+GET {{Analytics_HostAddress}}/api/v1/analytics/productivity
+Authorization: Bearer {{jwt_token}}
+
+### 7. Get Project Analytics (replace {project_id} with actual project ID)
+GET {{Analytics_HostAddress}}/api/v1/analytics/projects/1
+Authorization: Bearer {{jwt_token}}
+
+### Variables for testing (you'll need to set these)
+# @jwt_token = your-jwt-token-here
+
+### Example usage with API Gateway
+@Gateway_HostAddress = http://localhost:5089
+
+### Get Dashboard via API Gateway
+GET {{Gateway_HostAddress}}/analytics/dashboard
+Authorization: Bearer {{jwt_token}}
+
+### Get Task Summary via API Gateway  
+GET {{Gateway_HostAddress}}/analytics/tasks/summary
+Authorization: Bearer {{jwt_token}}
+
+### Get Productivity via API Gateway
+GET {{Gateway_HostAddress}}/analytics/productivity
+Authorization: Bearer {{jwt_token}}
+
+### Get Project Analytics via API Gateway
+GET {{Gateway_HostAddress}}/analytics/projects/1
+Authorization: Bearer {{jwt_token}}

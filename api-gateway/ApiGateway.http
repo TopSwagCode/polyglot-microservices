@@ -1,0 +1,62 @@
+@ApiGateway_HostAddress = http://localhost:8080
+@Token = 
+
+### Check API Gateway health
+GET {{ApiGateway_HostAddress}}/health
+
+### Get API Gateway info
+GET {{ApiGateway_HostAddress}}/
+
+### Register a new user via API Gateway
+POST {{ApiGateway_HostAddress}}/auth/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "gatewayuser",
+  "password": "TestPassword123!"
+}
+
+### Login via API Gateway
+POST {{ApiGateway_HostAddress}}/auth/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "gatewayuser",
+  "password": "TestPassword123!"
+}
+
+### Get current user info via API Gateway (requires JWT token)
+# First run the login request and copy the token to the @Token variable above
+GET {{ApiGateway_HostAddress}}/auth/api/auth/me
+Authorization: Bearer {{Token}}
+
+### Test direct auth endpoint (should work)
+GET {{ApiGateway_HostAddress}}/auth/
+
+### Test auth service health check via gateway
+GET {{ApiGateway_HostAddress}}/auth/health
+
+### Register another user for testing
+POST {{ApiGateway_HostAddress}}/auth/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "gatewayuser2", 
+  "password": "AnotherPassword456!"
+}
+
+### Login with second user via gateway
+POST {{ApiGateway_HostAddress}}/auth/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "gatewayuser2",
+  "password": "AnotherPassword456!"
+}
+
+### Test invalid route (should return 404 or routing error)
+GET {{ApiGateway_HostAddress}}/nonexistent/endpoint
+
+### Test direct access without gateway (for comparison)
+# This should work directly to auth service
+# GET http://localhost:5000/api/auth/register
