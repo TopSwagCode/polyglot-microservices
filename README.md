@@ -6,6 +6,7 @@ architecture with a **polyglot stack.**
 - **.NET (C#)** → API Gateway & Authentication
 - **Go** → Task Service (high-performance event-driven service)
 - **Python** → Analytics Service (data processing, reporting)
+- **Sveltekit** → Frontend
 
 It is designed to highlight skills in **distributed systems,
 microservices, DevOps, and clean code**.
@@ -30,7 +31,7 @@ And then go to: [http://localhost:3000](http://localhost:3000)
 ``` mermaid
 flowchart LR
     subgraph Client
-        UI[Frontend / API Client]
+        UI[Frontend - Sveltekit]
     end
 
     subgraph Gateway[API Gateway - .NET]
@@ -82,6 +83,12 @@ flowchart LR
 
 -   Consumes events from Kafka
 -   Stores results in MongoDB
+
+### Frontend (Sveltekit)
+
+-   Small Webclient to call all API endpoints
+-   Developer tool page, describing the solution and tools
+
 
 ------------------------------------------------------------------------
 
@@ -143,3 +150,4 @@ TODO
 * Opentelemetry across the stack
 * Tests
 * Deployed solution on either home server or Hetzner cloud with Auto wipe / reset data stores.
+* Fix known bugs. Eg. Complete a task and open it again doesn't update the metrics count, so you are able to get > 100% completed tasks :D
