@@ -79,7 +79,42 @@ pre { background: var(--color-surface); padding:1rem; border:1px solid var(--col
 .btn[disabled] { opacity:.45; pointer-events:none; }
 
 /* Forms */
-input[type='text'], input[type='password'], input[type='search'], input[type='email'] { width:100%; background:var(--color-surface); color:var(--color-text); border:1px solid var(--color-border); padding:.75rem .85rem; border-radius:var(--radius-sm); font:500 0.95rem/1.2 var(--font-sans); box-sizing:border-box; transition:border-color var(--transition), background var(--transition); }
+/* Force light inputs (text content) to true black for readability even in dark theme */
+body input[type='text'],
+body input[type='password'],
+body input[type='search'],
+body input[type='email'] {
+	width:100%;
+	background:#ffffff;
+	color:#000 !important;
+	-webkit-text-fill-color:#000; /* Safari/WebKit */
+	caret-color:#000;
+	border:1px solid var(--color-border);
+	padding:.75rem .85rem;
+	border-radius:var(--radius-sm);
+	font:500 0.95rem/1.2 var(--font-sans);
+	box-sizing:border-box;
+	transition:border-color var(--transition), background var(--transition), color var(--transition);
+}
+/* Utility class to opt-in only where desired (will supersede future theme toggles) */
+.light-input { background:#fff !important; color:#000 !important; -webkit-text-fill-color:#000 !important; caret-color:#000; }
+.light-input::placeholder { color:#555 !important; -webkit-text-fill-color:#555 !important; }
+/* Autofill neutralizer */
+input.light-input:-webkit-autofill,
+input.light-input:-webkit-autofill:hover,
+input.light-input:-webkit-autofill:focus {
+	-webkit-text-fill-color:#000 !important;
+	box-shadow:0 0 0 1000px #fff inset;
+	transition:background-color 5000s ease-in-out 0s;
+}
+body input[type='text']::placeholder,
+body input[type='password']::placeholder,
+body input[type='search']::placeholder,
+body input[type='email']::placeholder {
+	color:#555 !important; /* slightly dimmer than text for distinction */
+	-webkit-text-fill-color:#555;
+	opacity:1;
+}
 input:focus { outline:none; border-color:var(--color-accent); box-shadow:0 0 0 3px rgba(79,140,255,.35); }
 label { font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-text-dim); display:block; margin-bottom:.35rem; }
 form .field { margin-bottom:1rem; }

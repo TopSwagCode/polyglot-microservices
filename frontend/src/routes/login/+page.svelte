@@ -26,12 +26,12 @@
 		<h1 class="login-title">Login</h1>
 		<div class="field full">
 			<label for="username">Username</label>
-			<input id="username" name="username" autocomplete="username" bind:value={username} required class="full" />
+			<input id="username" name="username" autocomplete="username" bind:value={username} required class="full light-input" />
 		</div>
 		<div class="field full">
 			<label for="password">Password</label>
 			<div class="password-wrapper">
-				<input id="password" type={showPwd ? 'text':'password'} name="password" autocomplete="current-password" bind:value={password} required class="full" />
+				<input id="password" type={showPwd ? 'text':'password'} name="password" autocomplete="current-password" bind:value={password} required class="full light-input" />
 				<button type="button" class="btn ghost toggle-btn" on:click={() => showPwd = !showPwd}>{showPwd ? 'Hide':'Show'}</button>
 			</div>
 		</div>

@@ -11,7 +11,7 @@
 </script>
 
 <svelte:head>
-	<title>Polyglot Microservices</title>
+	<title>Polyglot Microservices Platform</title>
 	<meta name="description" content="Polyglot microservices demo platform across .NET, Go, Python." />
 </svelte:head>
 
@@ -19,7 +19,7 @@
 <div class="hero stack-lg">
 	<div class="stack" style="max-width:780px; margin-inline:auto; text-align:center;">
 		<h1 style="margin:0;">Ship faster with a polyglot microservices stack</h1>
-		<p style="margin:0; font-size:1.05rem; color:var(--color-text-dim);">Explore a modern demo platform combining <strong>.NET</strong>, <strong>Go</strong> and <strong>Python</strong> services behind a unified API gateway. Observability, events & analytics—simplified.</p>
+		<p style="margin:0; font-size:1.05rem; color:var(--color-text-dim);">Explore a modern demo platform combining <strong>.NET</strong>, <strong>Go</strong> and <strong>Python</strong> services behind a unified API gateway. Events & analytics—simplified.</p>
 		<div class="row center" style="gap:1rem; margin-top:.5rem;">
 			<a href="/login" class="btn">Login</a>
 			<a href="/register" class="btn outline">Register User</a>

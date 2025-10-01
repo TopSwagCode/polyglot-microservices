@@ -79,7 +79,7 @@
 						{/each}
 			</ul>
 			<form onsubmit={(e) => { e.preventDefault(); addTask(); }} class="row" style="gap:.75rem;">
-				<input placeholder="New task..." bind:value={newTask} />
+				<input placeholder="New task..." bind:value={newTask} class="light-input" />
 				<button class="btn" disabled={!newTask.trim()}>Add</button>
 			</form>
 	</div>

@@ -4,18 +4,10 @@ title: Developer Tools
 # Developer Tools
 
 This document describes the developer tools available in the polyglot microservices platform for database and message queue inspection.
+To get everything up and running, simply use docker compose.
 
 ```bash
-docker compose up -d frontend api-gateway auth-service task-service analytics-service
-```
-
-```ts
-// Example: simple fetch to gateway
-async function ping() {
-  const res = await fetch('http://localhost:8080/health');
-  if (!res.ok) throw new Error('Gateway unhealthy');
-  return res.text();
-}
+docker compose up -d
 ```
 
 ## Available Tools
@@ -52,7 +44,7 @@ async function ping() {
 - **Kafka Cluster**: Connected to `kafka:9092`
 - **Topics**:
   - `task-events` - Task creation/update events
-  - `project-events` - Project-related events (if implemented)
+  - `project-events` - Project-related events
 
 ## Usage Instructions
 
@@ -80,15 +72,15 @@ async function ping() {
 
 ### Viewing Kafka Topics
 
-1. Open Kafka UI at http://localhost:8082
+1. Open [Kafka UI](http://localhost:8082) 
 2. Topics are automatically listed
 3. Click on topic name to view messages
 4. Use "Produce Message" to send test messages
 
 ### Browsing MongoDB Data
 
-1. Open Mongo Express at http://localhost:8081
-2. Click on `analytics_db` database
+1. Open [Mongo Express](http://localhost:8081) 
+2. Click on `analytics` database
 3. Browse collections to see consumed Kafka events
 4. View individual documents and their structure
 
@@ -106,4 +98,3 @@ These tools enhance the development experience by providing:
 - These tools are for **development only**
 - Do not expose these ports in production
 - Default credentials are used for convenience
-- Consider adding authentication for team environments
