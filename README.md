@@ -12,6 +12,19 @@ microservices, DevOps, and clean code**.
 
 ------------------------------------------------------------------------
 
+## 🔹 Quickstart
+
+If you just quick want to see it all in action
+
+```bash
+docker compose up -d
+```
+
+And then go to: [http://localhost:3000](http://localhost:3000)
+
+
+------------------------------------------------------------------------
+
 ## 🔹 Architecture
 
 ``` mermaid
@@ -99,8 +112,6 @@ docker compose up --build
 
 ## 🔹 Development
 
-Each service lives in its own folder:
-
     polyglot-microservices/
     │── frontend/             # Sveltekit
     │── api-gateway/          # .NET API Gateway
@@ -108,9 +119,8 @@ Each service lives in its own folder:
     │── task-service/         # Go Task Service
     │── analytics-service/    # Python Analytics API
     │── analytics-worker/     # Python Analytics Kafka consumer / worker
-    │── docs/                 # Architecture diagrams, ADRs
-    │── COPILOT_INSTRUCTIONS.md
-    │── README.md             # TODO Add rest of files :)
+    │── docker-compose.yml    # Docker compose file, for quickly spinning up entire solution
+    │── ...                   # 
 
 
 ------------------------------------------------------------------------
