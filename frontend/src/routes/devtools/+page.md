@@ -21,7 +21,7 @@ async function ping() {
 ## Available Tools
 
 ### 1. Mongo Express (MongoDB Web UI)
-- **URL**: http://localhost:8081
+- **URL**: [http://localhost:8081](http://localhost:8081)
 - **Purpose**: MongoDB database administration and data browsing
 - **Database**: `analytics` (Analytics Service data)
 - **Collections**: 
@@ -29,7 +29,7 @@ async function ping() {
   - Any other analytics collections
 
 ### 2. pgAdmin (PostgreSQL Web UI)
-- **URL**: http://localhost:5050
+- **URL**: [http://localhost:5050](http://localhost:5050)
 - **Purpose**: PostgreSQL database administration
 - **Login**: admin@admin.com / admin
 - **Databases to Connect**:
@@ -47,7 +47,7 @@ async function ping() {
     - Password: `task_password`
 
 ### 3. Kafka UI
-- **URL**: http://localhost:8082
+- **URL**: [http://localhost:8082](http://localhost:8082)
 - **Purpose**: Kafka cluster monitoring and topic management
 - **Kafka Cluster**: Connected to `kafka:9092`
 - **Topics**:
@@ -58,7 +58,7 @@ async function ping() {
 
 ### Setting up pgAdmin Database Connections
 
-1. Open pgAdmin at http://localhost:5050
+1. Open [pgAdmin](http://localhost:5050) 
 2. Login with admin@admin.com / admin
 3. Right-click "Servers" → "Register" → "Server"
 4. For Auth Database:
