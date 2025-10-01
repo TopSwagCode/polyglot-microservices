@@ -2,13 +2,26 @@
 # Polyglot Microservices Platform
 
 This project is a **showcase system** demonstrating modern software
-architecture with a **polyglot stack**:\
-- **.NET (C#)** → API Gateway & Authentication\
-- **Go** → Task Service (high-performance event-driven service)\
+architecture with a **polyglot stack.**
+- **.NET (C#)** → API Gateway & Authentication
+- **Go** → Task Service (high-performance event-driven service)
 - **Python** → Analytics Service (data processing, reporting)
 
 It is designed to highlight skills in **distributed systems,
 microservices, DevOps, and clean code**.
+
+------------------------------------------------------------------------
+
+## 🔹 Quickstart
+
+If you just quick want to see it all in action
+
+```bash
+docker compose up -d
+```
+
+And then go to: [http://localhost:3000](http://localhost:3000)
+
 
 ------------------------------------------------------------------------
 
@@ -24,6 +37,11 @@ flowchart LR
         AUTH[Auth Service - .NET]
         TASKS[Task Service - Go]
         ANALYTICS[Analytics Service - Python]
+        AUTH -->|stores| PGA[(Postgres)]
+        TASKS -->|stores| PGB[(Postgres)]
+        TASKS -->|publishes| MQ[(Kafka)]
+        MQ --> ANALYTICS
+        ANALYTICS -->|stores| MDB[(MongoDB)]
     end
 
     UI --> Gateway
@@ -32,11 +50,6 @@ flowchart LR
     Gateway --> TASKS
     Gateway --> ANALYTICS
 
-    AUTH -->|stores| PG[(PostgreSQL)]
-    TASKS -->|stores| PG
-    TASKS -->|publishes| MQ[(Kafka)]
-    MQ --> ANALYTICS
-    ANALYTICS -->|stores| MDB[(MongoDB)]
 ```
 
 ------------------------------------------------------------------------
@@ -99,21 +112,34 @@ docker compose up --build
 
 ## 🔹 Development
 
-Each service lives in its own folder:
-
     polyglot-microservices/
+    │── frontend/             # Sveltekit
     │── api-gateway/          # .NET API Gateway
     │── auth-service/         # .NET Auth Service
     │── task-service/         # Go Task Service
     │── analytics-service/    # Python Analytics API
     │── analytics-worker/     # Python Analytics Kafka consumer / worker
-    │── docs/                 # Architecture diagrams, ADRs
-    │── COPILOT_INSTRUCTIONS.md
-    │── README.md             # TODO Add rest of files :)
+    │── docker-compose.yml    # Docker compose file, for quickly spinning up entire solution
+    │── ...                   # 
 
 
 ------------------------------------------------------------------------
 
 ## 🔹 License
 
-ToDo :D
+TODO
+
+## 🔹 Roadmap
+
+* ADR
+* License
+* Cleanup
+    * .http files
+    * outdated tests
+
+## 🔹 Ideas / Nice to have
+
+* Authentication Events (UserRegisteredEvent, UserLoggedInEvent, etc.)
+* Opentelemetry across the stack
+* Tests
+* Deployed solution on either home server or Hetzner cloud with Auto wipe / reset data stores.
