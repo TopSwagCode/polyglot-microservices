@@ -53,9 +53,10 @@ The UI is now wired to real endpoints when available:
 | Login | `POST /auth/login` | `src/lib/stores/auth.ts` |
 | Current user | `GET /auth/me` | `auth.store` after login |
 | Projects list | `GET /projects` | `dashboard/+page.svelte` |
-| Tasks by project | `GET /tasks?project_id=...` | `projects/[id]/+page.svelte` |
-| Create task | `POST /tasks` | same page |
-| Toggle status | `PUT /tasks/{id}` | same page |
+| Create project | `POST /projects` | `dashboard/+page.svelte` (optimistic) |
+| Tasks by project | `GET /tasks?project_id=...` or `GET /projects/{id}` | `projects/[id]/+page.svelte` |
+| Create task | `POST /tasks` | `projects/[id]/+page.svelte` |
+| Toggle status | `PUT /tasks/{id}` | `projects/[id]/+page.svelte` |
 
 Steps if running locally:
 1. Start all backend services + API gateway (ensure it listens on port 8080 or set `VITE_API_BASE`).
@@ -64,6 +65,12 @@ Steps if running locally:
 4. Create a project via API (UI create-project flow not yet added) then view it in the dashboard.
 
 To customize base URL: `VITE_API_BASE=http://localhost:8080 npm run dev`.
+
+### Project Creation UI
+On the dashboard you can create a project inline:
+1. Enter a name.
+2. Submit — a provisional project appears immediately (optimistic update) and is replaced when the server responds.
+3. On failure it rolls back and shows an error message.
 
 ### Next Ideas
 * Connect real WebSocket or SSE stream for live analytics.
