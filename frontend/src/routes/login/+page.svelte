@@ -39,7 +39,7 @@
 			<div class="error-msg">{localError || $auth.error}</div>
 		{/if}
 		<button class="btn primary full" disabled={$auth.loading}>{$auth.loading ? 'Signing in...' : 'Login'}</button>
-		<p class="hint">Demo login accepts any credentials.</p>
+		
 	</form>
 </div>
 
