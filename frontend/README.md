@@ -57,6 +57,9 @@ The UI is now wired to real endpoints when available:
 | Tasks by project | `GET /tasks?project_id=...` or `GET /projects/{id}` | `projects/[id]/+page.svelte` |
 | Create task | `POST /tasks` | `projects/[id]/+page.svelte` |
 | Toggle status | `PUT /tasks/{id}` | `projects/[id]/+page.svelte` |
+| Analytics dashboard | `GET /analytics/dashboard` | `analytics/+page.svelte` |
+| Task summary | `GET /analytics/tasks/summary` | `analytics/+page.svelte` |
+| Productivity | `GET /analytics/productivity` | `analytics/+page.svelte` |
 
 Steps if running locally:
 1. Start all backend services + API gateway (ensure it listens on port 8080 or set `VITE_API_BASE`).
@@ -71,6 +74,21 @@ On the dashboard you can create a project inline:
 1. Enter a name.
 2. Submit — a provisional project appears immediately (optimistic update) and is replaced when the server responds.
 3. On failure it rolls back and shows an error message.
+
+### Analytics Page Details
+The analytics page now performs 3 parallel requests when you open or refresh it:
+* `GET /analytics/dashboard` – high level totals & recent activity
+* `GET /analytics/tasks/summary` – task completion distribution & recent completions
+* `GET /analytics/productivity` – daily completions, weekly summary, recommendations
+
+Displayed sections:
+* KPI cards (Total Tasks, Completed Tasks, Active Projects, Productivity Score)
+* Recent Activity event table
+* Recent Completions list
+* Daily Completions mini-grid + most productive day
+* Recommendations list
+
+A refresh button re-runs all requests concurrently. Failures surface a red error card without crashing the page.
 
 ### Next Ideas
 * Connect real WebSocket or SSE stream for live analytics.

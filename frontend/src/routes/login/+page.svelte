@@ -22,23 +22,34 @@
 </svelte:head>
 
 <div class="auth-wrapper center" style="min-height:60vh;">
-	<form class="surface" style="max-width:420px; width:100%;" on:submit|preventDefault={submit}>
-		<h1 style="margin:.25rem 0 1.25rem; font-size:1.6rem; text-align:center;">Login</h1>
-		<div class="field">
+	<form class="surface login-form" on:submit|preventDefault={submit}>
+		<h1 class="login-title">Login</h1>
+		<div class="field full">
 			<label for="username">Username</label>
-			<input id="username" name="username" autocomplete="username" bind:value={username} required />
+			<input id="username" name="username" autocomplete="username" bind:value={username} required class="full" />
 		</div>
-		<div class="field">
+		<div class="field full">
 			<label for="password">Password</label>
-			<div style="position:relative;">
-				<input id="password" type={showPwd ? 'text':'password'} name="password" autocomplete="current-password" bind:value={password} required />
-				<button type="button" class="btn ghost" style="position:absolute; top:4px; right:4px; padding:.4rem .6rem; font-size:.6rem;" on:click={() => showPwd = !showPwd}>{showPwd ? 'Hide':'Show'}</button>
+			<div class="password-wrapper">
+				<input id="password" type={showPwd ? 'text':'password'} name="password" autocomplete="current-password" bind:value={password} required class="full" />
+				<button type="button" class="btn ghost toggle-btn" on:click={() => showPwd = !showPwd}>{showPwd ? 'Hide':'Show'}</button>
 			</div>
 		</div>
 		{#if localError || $auth.error}
-			<div style="color:var(--color-negative); font-size:.8rem; margin-bottom:1rem;">{localError || $auth.error}</div>
+			<div class="error-msg">{localError || $auth.error}</div>
 		{/if}
-		<button class="btn" style="width:100%;" disabled={$auth.loading}>{$auth.loading ? 'Signing in...' : 'Login'}</button>
-		<p style="margin-top:1rem; font-size:.7rem; text-align:center; color:var(--color-text-dim);">Demo login accepts any credentials.</p>
+		<button class="btn primary full" disabled={$auth.loading}>{$auth.loading ? 'Signing in...' : 'Login'}</button>
+		<p class="hint">Demo login accepts any credentials.</p>
 	</form>
 </div>
+
+<style>
+	.login-form { max-width:420px; width:100%; display:flex; flex-direction:column; gap:1rem; }
+	.login-title { margin:.25rem 0 0; font-size:1.6rem; text-align:center; }
+	.field { display:flex; flex-direction:column; gap:.4rem; }
+	.full { width:100%; }
+	.password-wrapper { position:relative; }
+	.toggle-btn { position:absolute; top:4px; right:4px; padding:.4rem .6rem; font-size:.6rem; }
+	.error-msg { color:var(--color-negative); font-size:.8rem; }
+	.hint { margin-top:.25rem; font-size:.7rem; text-align:center; color:var(--color-text-dim); }
+</style>

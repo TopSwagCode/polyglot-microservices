@@ -22,7 +22,7 @@
 		<p style="margin:0; font-size:1.05rem; color:var(--color-text-dim);">Explore a modern demo platform combining <strong>.NET</strong>, <strong>Go</strong> and <strong>Python</strong> services behind a unified API gateway. Observability, events & analytics—simplified.</p>
 		<div class="row center" style="gap:1rem; margin-top:.5rem;">
 			<a href="/login" class="btn">Login</a>
-			<a href="/dashboard" class="btn outline">View Dashboard (guest)</a>
+			<a href="/register" class="btn outline">Register User</a>
 		</div>
 	</div>
 	<hr class="divider" />
