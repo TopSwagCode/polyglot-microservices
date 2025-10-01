@@ -149,5 +149,6 @@ TODO
 * Authentication Events (UserRegisteredEvent, UserLoggedInEvent, etc.)
 * Opentelemetry across the stack
 * Tests
-* Deployed solution on either home server or Hetzner cloud with Auto wipe / reset data stores.
-* Fix known bugs. Eg. Complete a task and open it again doesn't update the metrics count, so you are able to get > 100% completed tasks :D Also Analytics page is broken until some data has been created.
+* Deployed solution on either home server or Hetzner cloud with Auto wipe / reset data stores
+* Fix known bugs. Eg. Complete a task and open it again doesn't update the metrics count, so you are able to get > 100% completed tasks :D Also Analytics page is broken until some data has been created
+* Kafka Schema registry
