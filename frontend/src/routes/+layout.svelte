@@ -1,57 +1,23 @@
 <script lang="ts">
-	import Header from './Header.svelte';
 	import '../app.css';
-
+	import Navbar from '$lib/components/Navbar.svelte';
 	let { children } = $props();
 </script>
 
-<div class="app">
-	<Header />
-
-	<main>
+<div class="layout-root">
+	<Navbar />
+	<main class="container fade-in" role="main">
 		{@render children()}
 	</main>
-
-	<footer>
-		<p>
-			visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to learn about SvelteKit
-		</p>
+	<footer class="footer container">
+		<div class="meta">Polyglot Microservices Demo · <a href="https://github.com/TopSwagCode" rel="noopener" target="_blank">GitHub</a></div>
 	</footer>
 </div>
 
 <style>
-	.app {
-		display: flex;
-		flex-direction: column;
-		min-height: 100vh;
-	}
-
-	main {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		padding: 1rem;
-		width: 100%;
-		max-width: 64rem;
-		margin: 0 auto;
-		box-sizing: border-box;
-	}
-
-	footer {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 12px;
-	}
-
-	footer a {
-		font-weight: bold;
-	}
-
-	@media (min-width: 480px) {
-		footer {
-			padding: 12px 0;
-		}
-	}
+	.layout-root { min-height:100vh; display:flex; flex-direction:column; }
+	main { flex:1; padding:2.2rem 0 3rem; }
+	.footer { font-size:.7rem; letter-spacing:.05em; text-transform:uppercase; opacity:.55; padding:2rem 0 3rem; }
+	.footer a { color:var(--color-text-dim); }
+	.footer a:hover { color:var(--color-text); }
 </style>
