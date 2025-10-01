@@ -6,7 +6,7 @@
 
 <div class="layout-root">
 	<Navbar />
-	<main class="container fade-in" role="main">
+	<main class="container fade-in">
 		{@render children()}
 	</main>
 	<footer class="footer container">

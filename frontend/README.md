@@ -46,10 +46,24 @@ npm run preview
 ```
 
 ### Replacing Mocks with Real APIs
-1. Implement gateway routes for auth, tasks, analytics.
-2. Update `src/lib/api.ts` if base path changes.
-3. Swap mock `setTimeout` + hard-coded arrays with `apiClient.get('/tasks/projects')` etc.
-4. Extend the auth store `login()` to post to real auth endpoint and store JWT.
+The UI is now wired to real endpoints when available:
+
+| Feature | Endpoint (via gateway) | Code reference |
+|---------|------------------------|----------------|
+| Login | `POST /auth/login` | `src/lib/stores/auth.ts` |
+| Current user | `GET /auth/me` | `auth.store` after login |
+| Projects list | `GET /projects` | `dashboard/+page.svelte` |
+| Tasks by project | `GET /tasks?project_id=...` | `projects/[id]/+page.svelte` |
+| Create task | `POST /tasks` | same page |
+| Toggle status | `PUT /tasks/{id}` | same page |
+
+Steps if running locally:
+1. Start all backend services + API gateway (ensure it listens on port 8080 or set `VITE_API_BASE`).
+2. Register a user (`/auth/register`) or use an existing user.
+3. Login through `/login` in the UI (token persisted in localStorage).
+4. Create a project via API (UI create-project flow not yet added) then view it in the dashboard.
+
+To customize base URL: `VITE_API_BASE=http://localhost:8080 npm run dev`.
 
 ### Next Ideas
 * Connect real WebSocket or SSE stream for live analytics.
