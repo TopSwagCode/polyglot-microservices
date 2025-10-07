@@ -32,8 +32,8 @@ cp .env.example .env
 ```
 
 Key variable:
-* `VITE_API_BASE` – API Gateway base URL (reverse proxy). Example: `http://localhost:5089`
-If not set, a fallback `http://localhost:5089` is used with a console warning in dev.
+* `VITE_API_BASE` – API Gateway base URL (reverse proxy). Example: `http://localhost:8080`
+If not set, a fallback `http://localhost:8080` is used with a console warning in dev.
 
 ### Navbar Behavior
 Navigation links adapt to authentication state:
@@ -51,10 +51,10 @@ npm install
 npm run dev
 ```
 
-Environment variable `VITE_API_BASE` can be set to point to the API gateway once implemented. (Defaults to `http://localhost:5089`).
+Environment variable `VITE_API_BASE` can be set to point to the API gateway once implemented. (Defaults to `http://localhost:8080`).
 
 ```sh
-VITE_API_BASE=http://localhost:5089 npm run dev
+VITE_API_BASE=http://localhost:8080 npm run dev
 ```
 
 ### Building / Preview
@@ -125,7 +125,7 @@ The file `src/lib/api.ts` exports a singleton `apiClient` with helper methods: `
 import { apiClient } from '$lib/api';
 const projects = await apiClient.get('/projects', { auth: true });
 ```
-Pass `{ auth: true }` to automatically attach the `Authorization` header if a token is present in the auth store or localStorage. Configure base URL via `VITE_API_BASE` (defaults to `http://localhost:5089`).
+Pass `{ auth: true }` to automatically attach the `Authorization` header if a token is present in the auth store or localStorage. Configure base URL via `VITE_API_BASE` (defaults to `http://localhost:8080`).
 
 ### Reactive Stores Note
 When accessing the auth store inside Svelte components, prefer `$auth.token` / `$auth.user` for reactivity instead of reading properties directly off the `auth` object. Direct (`auth.token`) access will not trigger updates and can cause stale or unauthenticated states in UI logic.
