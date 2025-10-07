@@ -86,24 +86,32 @@ services:
       - auth-network
 
   kafka:
-    image: bitnami/kafka:latest
-    environment:
-      - KAFKA_ENABLE_KRAFT=yes
-      - KAFKA_CFG_NODE_ID=0
-      - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    # Switched to Redpanda for lightweight Kafka-compatible single-node development (BSL, free for dev)
+    image: redpandadata/redpanda:v24.2.10
+    container_name: kafka
+    command: >-
+      redpanda start \
+        --overprovisioned \
+        --smp 1 \
+        --memory 512M \
+        --reserve-memory 0M \
+        --node-id 1 \
+        --check=false \
+        --kafka-addr PLAINTEXT://0.0.0.0:9092 \
+        --advertise-kafka-addr PLAINTEXT://kafka:9092 \
+        --pandaproxy-addr 0.0.0.0:8082 \
+        --advertise-pandaproxy-addr kafka:8082 \
+        --rpc-addr 0.0.0.0:33145 \
+        --advertise-rpc-addr kafka:33145 \
+        --set redpanda.auto_create_topics_enabled=true
     ports:
       - "9092:9092"
     volumes:
-      - kafka_data:/bitnami/kafka
+      - kafka_data:/var/lib/redpanda/data
     networks:
       - auth-network
     healthcheck:
-      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list"]
+      test: ["CMD-SHELL", "rpk cluster info || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -174,17 +182,17 @@ services:
       - auth-network
     restart: unless-stopped
 
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    environment:
-      - VITE_API_BASE=http://api-gateway:5000
-    depends_on:
-      - api-gateway
-    networks:
-      - auth-network
-    restart: unless-stopped
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - VITE_API_BASE=http://api-gateway:5000
+  #   depends_on:
+  #     - api-gateway
+  #   networks:
+  #     - auth-network
+  #   restart: unless-stopped
 
   # Developer Tools
   mongo-express:
