@@ -27,6 +27,16 @@ And then go to: [http://localhost:3000](http://localhost:3000)
 
 ## 🔹 Demo
 
+Below is a small gif showing startup and stack in action.
+
+Recap: 
+* Frontend is hosted on it's own port outside the API gateway.
+* All API calls is hitting API gateway and is redirected to corresponding API (Task, Auth, Analytics).
+* When a Project and Task is created, it's stored in Postgres and a event is sent to KAFKA.
+* There is an Analytics worker server, that listens for new events on projects / tasks.
+    * When an event is consumed it stores the event in it's own database and also updates project / task / user metrics.
+
+
 ![demo](demo.gif)
 
 ------------------------------------------------------------------------
