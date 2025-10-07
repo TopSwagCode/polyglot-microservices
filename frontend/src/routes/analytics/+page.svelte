@@ -33,29 +33,22 @@
 	let lastRefreshed = $state<Date | null>(null);
 
 	async function fetchAll() {
-	  if (!auth.token) {
+	  if (!$auth.token) {
 	    error = 'Not authenticated';
 	    loading = false;
 	    return;
 	  }
-	  loading = true;
-	  error = null;
+	  loading = true; error = null;
 	  try {
 	    const [d,s,p] = await Promise.all([
-	      apiClient.get<DashboardAnalytics>('/analytics/dashboard'),
-	      apiClient.get<TaskSummary>('/analytics/tasks/summary'),
-	      apiClient.get<Productivity>('/analytics/productivity')
+	      apiClient.get<DashboardAnalytics>('/analytics/dashboard', { auth:true }),
+	      apiClient.get<TaskSummary>('/analytics/tasks/summary', { auth:true }),
+	      apiClient.get<Productivity>('/analytics/productivity', { auth:true })
 	    ]);
-	    dashboard = d;
-	    summary = s;
-	    productivity = p;
-	    lastRefreshed = new Date();
+	    dashboard = d; summary = s; productivity = p; lastRefreshed = new Date();
 	  } catch (e:any) {
-	    console.error(e);
-	    error = e?.message || 'Failed to load analytics';
-	  } finally {
-	    loading = false;
-	  }
+	    console.error(e); error = e?.message || 'Failed to load analytics';
+	  } finally { loading = false; }
 	}
 
 	function formatPercent(v:number|undefined) { return v == null ? '-' : (v*100).toFixed(0)+'%'; }
@@ -66,22 +59,10 @@
 	let unsub: (() => void) | null = null;
 
 	onMount(() => {
-	  // subscribe to auth store token changes explicitly
 	  unsub = auth.subscribe(s => {
-	    const token = s.token;
-	    if (token && token !== prevToken) {
-	      prevToken = token;
-	      fetchAll();
-	    }
+	    if (s.token && s.token !== prevToken) { prevToken = s.token; fetchAll(); }
 	  });
-	  // if token already present at mount, trigger once
-	  const initialToken = auth.token;
-	  if (initialToken) {
-	    prevToken = initialToken;
-	    fetchAll();
-	  } else {
-	    loading = false; // avoid perpetual loading without token
-	  }
+	  if ($auth.token) { prevToken = $auth.token; fetchAll(); } else { loading = false; }
 	  started = true;
 	});
 
@@ -89,7 +70,15 @@
 
 </script>
 
-<svelte:head><title>Analytics</title></svelte:head>
+<!-- Unauthenticated message -->
+{#if !$auth.token}
+  <h1 style="margin:0 0 1.5rem;">Analytics</h1>
+  <div class="card" style="border:1px solid var(--color-border); background:rgba(255,255,255,.03);">
+    <p style="margin:0 0 .75rem;">You must be logged in to view analytics data.</p>
+    <a href="/login" class="btn">Login</a>
+  </div>
+{:else}
+<!-- existing authenticated UI below -->
 <h1 style="margin:0 0 1.5rem; display:flex; gap:.75rem; align-items:center;">Analytics
   <button class="btn subtle" onclick={fetchAll} disabled={loading} style="margin-left:auto; display:flex; gap:.35rem; align-items:center;">
     {#if loading}<span class="spinner" style="width:.75rem; height:.75rem; border:2px solid var(--color-border); border-top-color:var(--color-accent); border-radius:50%; animation:spin .6s linear infinite;"></span>{/if}
@@ -201,6 +190,7 @@
 
   <hr class="divider" />
   <p class="muted-label" style="font-size:.6rem;">Last refreshed {lastRefreshed ? lastRefreshed.toLocaleTimeString() : 'just now'}</p>
+{/if}
 {/if}
 
 <style>
