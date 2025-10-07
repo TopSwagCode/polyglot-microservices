@@ -78,9 +78,9 @@
 							</li>
 						{/each}
 			</ul>
-			<form onsubmit={(e) => { e.preventDefault(); addTask(); }} class="row" style="gap:.75rem;">
-				<input placeholder="New task..." bind:value={newTask} class="light-input" />
-				<button class="btn" disabled={!newTask.trim()}>Add</button>
-			</form>
+				<form class="row" style="gap:.5rem;" onsubmit={(e)=>{e.preventDefault(); addTask();}}>
+					<input placeholder="New task..." bind:value={newTask} class="input" />
+					<button class="btn" disabled={!newTask.trim()}>Add</button>
+				</form>
 	</div>
 {/if}

@@ -22,7 +22,7 @@ This is a **showcase polyglot microservices platform** demonstrating **.NET, Go,
 polyglot-microservices/
 ├── Api-Gateway.sln          # Root solution file
 ├── src/Api-Gateway/         # Only implemented service
-│   ├── Api-Gateway.http     # REST Client tests (port 5089)
+│   ├── Api-Gateway.http     # REST Client tests (port 8080)
 │   └── Program.cs           # Minimal API template
 └── .vscode/settings.json    # VS Code workspace config
 ```

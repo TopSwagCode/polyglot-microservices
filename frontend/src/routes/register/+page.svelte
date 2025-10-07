@@ -47,16 +47,16 @@ async function register() {
     <h1 class="reg-title">Create Account</h1>
     <div class="field full">
       <label for="username">Username</label>
-      <input id="username" name="username" bind:value={username} required class="full light-input" autocomplete="username" />
+      <input id="username" name="username" bind:value={username} required class="input" autocomplete="username" />
     </div>
     <div class="field full">
       <label for="password">Password</label>
-      <input id="password" type="password" name="password" bind:value={password} required class="full light-input" autocomplete="new-password" />
+      <input id="password" type="password" name="password" bind:value={password} required class="input" autocomplete="new-password" />
       <small class="hint">Minimum 8 characters.</small>
     </div>
     <div class="field full">
       <label for="confirm">Confirm Password</label>
-      <input id="confirm" type="password" name="confirm" bind:value={confirm} required class="full light-input" autocomplete="new-password" />
+      <input id="confirm" type="password" name="confirm" bind:value={confirm} required class="input" autocomplete="new-password" />
     </div>
     {#if error}
       <div class="error-msg">{error}</div>
