@@ -43,6 +43,10 @@
 			<h3 style="margin:.2rem 0 .4rem; font-size:.95rem; letter-spacing:.05em; text-transform:uppercase; color:var(--color-text-dim);">Analytics</h3>
 			<p style="margin:0; font-size:.9rem; color:var(--color-text-dim);">Python FastAPI service aggregating events for dashboards.</p>
 		</div>
+		<div class="card">
+			<h3 style="margin:.2rem 0 .4rem; font-size:.95rem; letter-spacing:.05em; text-transform:uppercase; color:var(--color-text-dim);">Frontend</h3>
+			<p style="margin:0; font-size:.9rem; color:var(--color-text-dim);">Sveltekit SPA calling all services through API Gateway.</p>
+		</div>
 	</div>
 </div>
 {/if}

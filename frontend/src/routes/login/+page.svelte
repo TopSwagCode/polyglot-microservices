@@ -26,12 +26,12 @@
 		<h1 class="login-title">Login</h1>
 		<div class="field full">
 			<label for="username">Username</label>
-			<input id="username" name="username" autocomplete="username" bind:value={username} required class="full light-input" />
+			<input id="username" name="username" autocomplete="username" bind:value={username} required class="input" />
 		</div>
 		<div class="field full">
 			<label for="password">Password</label>
 			<div class="password-wrapper">
-				<input id="password" type={showPwd ? 'text':'password'} name="password" autocomplete="current-password" bind:value={password} required class="full light-input" />
+				<input id="password" type={showPwd ? 'text':'password'} name="password" autocomplete="current-password" bind:value={password} required class="input" />
 				<button type="button" class="btn ghost toggle-btn" on:click={() => showPwd = !showPwd}>{showPwd ? 'Hide':'Show'}</button>
 			</div>
 		</div>
@@ -49,7 +49,8 @@
 	.field { display:flex; flex-direction:column; gap:.4rem; }
 	.full { width:100%; }
 	.password-wrapper { position:relative; }
-	.toggle-btn { position:absolute; top:4px; right:4px; padding:.4rem .6rem; font-size:.6rem; }
+	.password-wrapper .input { padding-right:4.2rem; }
+	.toggle-btn { position:absolute; top:4px; right:4px; height:36px; display:inline-flex; align-items:center; }
 	.error-msg { color:var(--color-negative); font-size:.8rem; }
 	.hint { margin-top:.25rem; font-size:.7rem; text-align:center; color:var(--color-text-dim); }
 </style>

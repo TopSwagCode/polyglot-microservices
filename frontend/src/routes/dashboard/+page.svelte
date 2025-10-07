@@ -48,7 +48,7 @@
 
 <h1 style="margin:0 0 1.5rem;">Dashboard</h1>
 <form onsubmit={(e)=>{e.preventDefault(); createProject();}} class="row" style="gap:.75rem; margin:0 0 1.25rem; flex-wrap:wrap;">
-	<input placeholder="New project name" bind:value={newProjectName} class="light-input" style="flex:1; min-width:220px;" />
+	<input placeholder="New project name" bind:value={newProjectName} class="input" style="flex:1; min-width:220px;" />
 	<button class="btn" disabled={!newProjectName.trim() || creating}>{creating ? 'Creating...' : 'Add Project'}</button>
 </form>
 {#if error}

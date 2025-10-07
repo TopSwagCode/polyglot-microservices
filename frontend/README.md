@@ -130,6 +130,25 @@ Pass `{ auth: true }` to automatically attach the `Authorization` header if a to
 ### Reactive Stores Note
 When accessing the auth store inside Svelte components, prefer `$auth.token` / `$auth.user` for reactivity instead of reading properties directly off the `auth` object. Direct (`auth.token`) access will not trigger updates and can cause stale or unauthenticated states in UI logic.
 
+### Markdown Pages (mdsvex)
+The project is configured with `mdsvex` to allow `.md`, `.svx`, and `.mdx` files as routable Svelte pages.
+
+Key points:
+* Global markdown layout: `src/lib/components/MarkdownLayout.svelte` (applies typography & frontmatter title)
+* Add a `+page.md` inside any route directory to create a content-driven page.
+* Frontmatter `title:` is surfaced automatically as the page heading.
+
+Example frontmatter:
+```md
+---
+title: Developer Tools
+---
+# Content
+...
+```
+
+Developer tools page lives at `/devtools` via `src/routes/devtools/+page.md`.
+
 ### Next Ideas
 * Connect real WebSocket or SSE stream for live analytics.
 * Add optimistic UI updates for task create/complete.
