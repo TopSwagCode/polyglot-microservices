@@ -3,31 +3,14 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
-class TaskEvent(BaseModel):
-    event: str  # task_created, task_updated, task_completed, task_deleted
-    task_id: Optional[int] = None  # Optional for project events
-    project_id: Optional[int] = None
-    user_id: str  # Comes as string from Kafka
-    username: str
-    title: Optional[str] = None
-    name: Optional[str] = None  # For project names
-    status: Optional[str] = None
-    timestamp: datetime
-    
-    # Accept any additional fields
-    class Config:
-        extra = "allow"
-
-
 class ProjectEvent(BaseModel):
-    event: str  # project_created, project_updated, project_deleted
-    project_id: Optional[int] = None
-    user_id: str  # Comes as string from Kafka
+    event: str  # internal normalized: project_created, etc.
+    project_id: int
+    user_id: str
     username: str
-    name: Optional[str] = None  # Project name
+    name: str | None = None
     timestamp: datetime
-    
-    # Accept any additional fields
+
     class Config:
         extra = "allow"
 
