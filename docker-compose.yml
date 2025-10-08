@@ -164,14 +164,30 @@ services:
       retries: 3
       start_period: 40s
 
-  analytics-worker:
-    build: ./src/analytics-worker
+  analytics-worker-task:
+    build: ./src/analytics-worker-task
     environment:
       - MONGODB_URL=mongodb://root:secret@mongo:27017
       - DATABASE_NAME=analytics
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - KAFKA_GROUP_ID=analytics-worker
+      - KAFKA_GROUP_ID=analytics-worker-task
       - KAFKA_TOPIC_TASK=task-events
+    depends_on:
+      mongo:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks:
+      - auth-network
+    restart: unless-stopped
+
+  analytics-worker-project:
+    build: ./src/analytics-worker-project
+    environment:
+      - MONGODB_URL=mongodb://root:secret@mongo:27017
+      - DATABASE_NAME=analytics
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_GROUP_ID=analytics-worker-project
       - KAFKA_TOPIC_PROJECT=project-events
     depends_on:
       mongo:

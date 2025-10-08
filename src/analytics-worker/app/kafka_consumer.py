@@ -97,36 +97,83 @@ class KafkaEventConsumer:
                 await asyncio.sleep(5)  # Wait before retrying
 
     async def _process_message(self, message):
-        """Process a single Kafka message"""
+        """Process a single Kafka message (new schema only).
+
+        Expected schema:
+        {
+            "event": "task.created" | "project.created" | ...,
+            "key": "task:1",               # optional for analytics currently
+            "timestamp": "2025-10-08T19:14:42.082390932Z",
+            "data": {                        # domain payload
+                "ID": 1,                     # task id (task events)
+                "ProjectID": 2,
+                "Title": "a",
+                "Status": "open",
+                "UserID": "1",
+                "Username": "admin"
+            }
+        }
+        Project events use analogous fields (ID, Name, UserID, Username).
+        """
+        envelope = message.value
+        topic = getattr(message, "topic", "")
         try:
-            topic = message.topic
-            data = message.value
-            event_type = data.get("event", "")
-            
-            # Comprehensive logging for every event received
-            logger.info("=== EVENT RECEIVED ===", 
-                       topic=topic, 
-                       event_type=event_type, 
-                       user_id=data.get("user_id"),
-                       username=data.get("username"),
-                       task_id=data.get("task_id"),
-                       project_id=data.get("project_id"),
-                       timestamp=data.get("timestamp"))
-            
-            logger.debug("Full event payload", payload=data)
-            
-            # Route based on event type rather than topic since both events come to task-events topic
-            if event_type.startswith("task_"):
-                logger.info("Routing to task event processor", event_type=event_type)
-                await self._process_task_event(data)
-            elif event_type.startswith("project_"):
-                logger.info("Routing to project event processor", event_type=event_type)
-                await self._process_project_event(data)
+            # Strict validation
+            if not isinstance(envelope, dict):
+                logger.warning("Skipping non-dict message", raw=envelope)
+                return
+            if "data" not in envelope or not isinstance(envelope["data"], dict):
+                logger.warning("Envelope missing data object", envelope=envelope)
+                return
+            event_type = envelope.get("event", "")
+            payload: Dict[str, Any] = envelope["data"]
+
+            # Extract fields (capitalized Go struct JSON keys expected). We do NOT fallback to old snake_case.
+            task_id = payload.get("ID") if event_type.startswith("task.") else None
+            project_id = payload.get("ProjectID")
+            user_id = payload.get("UserID")
+            username = payload.get("Username")
+            title = payload.get("Title")
+            status = payload.get("Status")
+            name = payload.get("Name")  # project name
+            ts_raw = envelope.get("timestamp")
+
+            logger.info(
+                "=== EVENT RECEIVED (strict) ===",
+                topic=topic,
+                event_type=event_type,
+                user_id=user_id,
+                username=username,
+                task_id=task_id,
+                project_id=project_id,
+                timestamp=ts_raw,
+            )
+            logger.debug("Envelope payload", envelope=envelope, data=payload)
+
+            if event_type.startswith("task."):
+                await self._process_task_event({
+                    "event": event_type,
+                    "task_id": task_id,
+                    "project_id": project_id,
+                    "user_id": user_id,
+                    "username": username,
+                    "title": title,
+                    "status": status,
+                    "timestamp": ts_raw,
+                })
+            elif event_type.startswith("project."):
+                await self._process_project_event({
+                    "event": event_type,
+                    "project_id": payload.get("ID"),  # For project events ID refers to project ID
+                    "user_id": user_id,
+                    "username": username,
+                    "name": name,
+                    "timestamp": ts_raw,
+                })
             else:
-                logger.warning("Unknown event type received", event_type=event_type, topic=topic)
-                
+                logger.warning("Unknown event type (strict mode)", event_type=event_type, topic=topic)
         except Exception as e:
-            logger.error("Error processing message", error=str(e), message_data=data, exc_info=True)
+            logger.error("Error processing message (strict)", error=str(e), envelope=envelope, exc_info=True)
 
     async def _process_task_event(self, data: Dict[str, Any]):
         """Process task event and store analytics data"""
@@ -140,6 +187,14 @@ class KafkaEventConsumer:
                        status=data.get("status"))
             
             # Create task event document with the correct field mapping
+            # Parse timestamp (strict)
+            ts_raw = data.get("timestamp")
+            timestamp = None
+            if isinstance(ts_raw, str):
+                try:
+                    timestamp = datetime.fromisoformat(ts_raw.replace("Z", "+00:00"))
+                except ValueError:
+                    logger.warning("Failed ISO parse task timestamp", raw=ts_raw)
             task_event = TaskEvent(
                 event=data.get("event"),
                 task_id=data.get("task_id"),
@@ -149,7 +204,7 @@ class KafkaEventConsumer:
                 title=data.get("title"),
                 name=data.get("name"),
                 status=data.get("status"),
-                timestamp=datetime.fromisoformat(data.get("timestamp").replace("Z", "+00:00"))
+                timestamp=timestamp or datetime.utcnow()
             )
             
             logger.info("Created task event object", task_event_id=task_event.task_id)
@@ -181,13 +236,20 @@ class KafkaEventConsumer:
                        name=data.get("name"))
             
             # Create project event document
+            ts_raw = data.get("timestamp")
+            timestamp = None
+            if isinstance(ts_raw, str):
+                try:
+                    timestamp = datetime.fromisoformat(ts_raw.replace("Z", "+00:00"))
+                except ValueError:
+                    logger.warning("Failed ISO parse project timestamp", raw=ts_raw)
             project_event = ProjectEvent(
                 event=data.get("event"),
                 project_id=data.get("project_id"),
                 user_id=str(data.get("user_id")),
                 username=data.get("username"),
                 name=data.get("name"),
-                timestamp=datetime.fromisoformat(data.get("timestamp").replace("Z", "+00:00"))
+                timestamp=timestamp or datetime.utcnow()
             )
             
             logger.info("Created project event object", project_event_id=project_event.project_id)
