@@ -19,7 +19,7 @@
 				<li><a href="/dashboard">Dashboard</a></li>
 				<li><a href="/analytics">Analytics</a></li>
 				
-				<li><button class="link" on:click={logout}>Logout</button></li>
+				<li><a href="/" class="link" on:click|preventDefault={logout}>Logout</a></li>
 			{:else}
 				<li><a href="/login">Login</a></li>
 				<li><a href="/register">Register</a></li>
