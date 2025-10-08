@@ -32,7 +32,16 @@
 <style>
 	.navbar { position:sticky; top:0; z-index:50; background:var(--color-bg); border-bottom:1px solid rgba(255,255,255,.06); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
 	.nav-inner { max-width:1100px; margin:0 auto; padding:.85rem 1.2rem; display:flex; align-items:center; gap:1.4rem; }
-	.brand { font-weight:600; letter-spacing:.05em; text-decoration:none; color:var(--color-text); font-size:1.05rem; }
+	.brand { font-family:var(--font-tech); font-weight:600; letter-spacing:.08em; text-decoration:none; font-size:1.05rem; position:relative; display:inline-flex; align-items:center; text-transform:lowercase; line-height:1; padding-bottom:2px; }
+	/* Fallback solid color for environments without background-clip */
+	.brand { color:#a9cfff; }
+	/* Gradient text where supported */
+	@supports (-webkit-background-clip:text) or (background-clip:text) {
+		.brand { background:linear-gradient(90deg,#6fb1ff,#8dd8ff 40%,#9fa9ff 70%,#a7b7ff); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; }
+	}
+	.brand:after { content:""; position:absolute; left:0; bottom:0; height:2px; width:0; background:linear-gradient(90deg,#6fb1ff,#8dd8ff); transition:width .35s ease; border-radius:2px; }
+	.brand:hover:after, .brand:focus-visible:after { width:100%; }
+	.brand:hover { text-shadow:0 0 4px rgba(140,190,255,.25); filter:none; }
 	ul { list-style:none; margin:0; padding:0; display:flex; gap:.9rem; align-items:center; }
 	ul a, .link { text-decoration:none; font-size:.75rem; letter-spacing:.05em; text-transform:uppercase; color:var(--color-text-dim); padding:.45rem .6rem; border-radius:.4rem; transition:background .2s, color .2s; background:none; border:none; cursor:pointer; }
 	ul a:hover, .link:hover { background:rgba(255,255,255,.08); color:var(--color-text); }

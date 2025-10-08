@@ -17,7 +17,7 @@
 
 {#if !$auth.user}
 <div class="hero stack-lg">
-	<div class="stack" style="max-width:780px; margin-inline:auto; text-align:center;">
+	<div class="stack hero-banner" style="max-width:780px; margin-inline:auto; text-align:center;">
 		<h1 style="margin:0;">Ship faster with a polyglot microservices stack</h1>
 		<p style="margin:0; font-size:1.05rem; color:var(--color-text-dim);">Explore a modern demo platform combining <strong>.NET</strong>, <strong>Go</strong> and <strong>Python</strong> services behind a unified API gateway. Events & analytics—simplified.</p>
 		<div class="row center" style="gap:1rem; margin-top:.5rem;">
@@ -53,4 +53,9 @@
 
 <style>
 	.hero { padding:2rem 0 3rem; }
+	.hero-banner { position:relative; }
+	.hero-banner:before { content:""; position:absolute; inset:0; margin:auto; width:260px; height:260px; background:url('/icon.png') center/contain no-repeat; opacity:.08; filter:grayscale(10%) drop-shadow(0 0 12px rgba(0,0,0,.15)); pointer-events:none; z-index:-1; }
+	@media (max-width: 640px){
+		.hero-banner:before { width:200px; height:200px; opacity:.12; }
+	}
 </style>
