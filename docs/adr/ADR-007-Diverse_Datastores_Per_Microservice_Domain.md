@@ -2,7 +2,7 @@
 
 **Status:** Accepted  
 **Date:** 2025-10-08  
-**Decision Makers:** Project Core Team
+**Decision Makers:** @TopSwagCode
 
 ## Context
 From the start, the project aimed to illustrate how each **microservice** can operate independently — including owning its own data storage.  

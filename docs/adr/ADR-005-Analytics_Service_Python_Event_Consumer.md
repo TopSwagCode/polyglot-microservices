@@ -2,7 +2,7 @@
 
 **Status:** Accepted  
 **Date:** 2025-10-08  
-**Decision Makers:** TopSwagCode
+**Decision Makers:** @TopSwagCode
 
 ## Context
 The Analytics Service is designed as a **decoupled component** that operates entirely from the event stream.  
