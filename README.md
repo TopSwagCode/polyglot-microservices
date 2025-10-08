@@ -141,8 +141,8 @@ docker compose up --build
     │── src/task-service/         # Go Task Service
     │── src/analytics-service/    # Python Analytics API
     │── src/analytics-worker/     # Python Analytics Kafka consumer / worker
-    │── assets/*                  # Static assets as logos, gifs and images
-    │── docs/*                    # Static assets as logos, gifs and images
+    │── assets/*                  # Static assets - logos, gifs and images
+    │── docs/*                    # Documentation - Architectural Decision Records and Planning in Markdown format
     │── docker-compose.yml        # Docker compose file, for quickly spinning up entire solution
     │── README.md                 # Github repository intro and getting started
 
@@ -163,9 +163,9 @@ TODO
 
 ## 🔹 Ideas / Nice to have
 
-* Authentication Events (UserRegisteredEvent, UserLoggedInEvent, etc.)
+* Authentication Events (UserRegisteredEvent, UserLoggedInEvent, etc.) (Using Postgres Kafka connector! :D)
 * Opentelemetry across the stack
 * Tests
-* Deployed solution on either home server or Hetzner cloud with Auto wipe / reset data stores
 * Fix known bugs. Eg. Complete a task and open it again doesn't update the metrics count, so you are able to get > 100% completed tasks :D Also Analytics page is broken until some data has been created
 * Kafka Schema registry
+* Contribution
