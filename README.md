@@ -132,17 +132,19 @@ docker compose up --build
 
 ------------------------------------------------------------------------
 
-## 🔹 Development
+## 🔹 Project overview
 
     polyglot-microservices/
-    │── frontend/             # Sveltekit
-    │── api-gateway/          # .NET API Gateway
-    │── auth-service/         # .NET Auth Service
-    │── task-service/         # Go Task Service
-    │── analytics-service/    # Python Analytics API
-    │── analytics-worker/     # Python Analytics Kafka consumer / worker
-    │── docker-compose.yml    # Docker compose file, for quickly spinning up entire solution
-    │── ...                   # 
+    │── src/frontend/             # Sveltekit
+    │── src/api-gateway/          # .NET API Gateway
+    │── src/auth-service/         # .NET Auth Service
+    │── src/task-service/         # Go Task Service
+    │── src/analytics-service/    # Python Analytics API
+    │── src/analytics-worker/     # Python Analytics Kafka consumer / worker
+    │── assets/*                  # Static assets as logos, gifs and images
+    │── docs/*                    # Static assets as logos, gifs and images
+    │── docker-compose.yml        # Docker compose file, for quickly spinning up entire solution
+    │── README.md                 # Github repository intro and getting started
 
 
 ------------------------------------------------------------------------
