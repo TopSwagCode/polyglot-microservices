@@ -160,6 +160,7 @@ TODO
     * .http files
     * outdated tests
     * Documentation and copilot-instructions.md
+* Better Domain Driven Design across codebase.
 
 ## 🔹 Ideas / Nice to have
 
