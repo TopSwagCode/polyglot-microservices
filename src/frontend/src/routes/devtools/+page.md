@@ -29,14 +29,14 @@ docker compose up -d
     - Host: `postgres` (container name)
     - Port: `5432`
     - Database: `authdb`
-    - Username: `auth_user`
-    - Password: `auth_password`
+    - Username: `authuser`
+    - Password: `secret`
   - **Task Database**:
     - Host: `task-postgres` (container name)  
     - Port: `5432`
     - Database: `taskdb`
-    - Username: `task_user`
-    - Password: `task_password`
+    - Username: `taskuser`
+    - Password: `secret`
 
 ### 3. Kafka UI
 - **URL**: [http://localhost:8082](http://localhost:8082)
