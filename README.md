@@ -160,6 +160,7 @@ TODO
 * Cleanup
     * .http files
     * outdated tests
+    * Documentation and copilot-instructions.md
 
 ## 🔹 Ideas / Nice to have
 
