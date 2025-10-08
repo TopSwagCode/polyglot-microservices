@@ -42,11 +42,10 @@ class AnalyticsService:
     async def update_project_metrics(self, project_event: ProjectEvent):
         """Update metrics based on project event"""
         try:
-            # Update user's active project count
-            await self._update_user_project_count(project_event)
-            
-            # Update project metrics document
+            # Apply project metrics mutation first so counts reflect this change
             await self._update_project_metrics_from_project(project_event)
+            # Then update user's active project count (now accurate)
+            await self._update_user_project_count(project_event)
             
             logger.debug("Project metrics updated",
                         project_id=project_event.project_id,
