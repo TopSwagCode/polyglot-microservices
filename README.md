@@ -1,4 +1,4 @@
-![polygot microservices](polygot-microservices.png)
+![polygot microservices](/assets/polygot-microservices.png)
 # Polyglot Microservices Platform
 
 This project is a **showcase system** demonstrating modern software
@@ -37,7 +37,7 @@ Recap:
     * When an event is consumed it stores the event in it's own database and also updates project / task / user metrics.
 
 
-![demo](demo.gif)
+![demo](/assets/demo.gif)
 
 ------------------------------------------------------------------------
 

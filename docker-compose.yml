@@ -1,6 +1,6 @@
 services:
   api-gateway:
-    build: ./api-gateway
+    build: ./src/api-gateway
     ports:
       - "8080:5000"
     environment:
@@ -15,7 +15,7 @@ services:
       - auth-network
 
   auth-service:
-    build: ./auth-service
+    build: ./src/auth-service
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Default=Host=postgres;Database=authdb;Username=authuser;Password=secret
@@ -29,7 +29,7 @@ services:
       - auth-network
 
   task-service:
-    build: ./task-service
+    build: ./src/task-service
     environment:
       - DB_DSN=host=task-postgres user=taskuser password=secret dbname=taskdb port=5432 sslmode=disable
       - KAFKA_BROKER=kafka:9092
@@ -136,7 +136,7 @@ services:
       start_period: 30s
 
   analytics-service:
-    build: ./analytics-service
+    build: ./src/analytics-service
     environment:
       - MONGODB_URL=mongodb://root:secret@mongo:27017
       - DATABASE_NAME=analytics
@@ -165,7 +165,7 @@ services:
       start_period: 40s
 
   analytics-worker:
-    build: ./analytics-worker
+    build: ./src/analytics-worker
     environment:
       - MONGODB_URL=mongodb://root:secret@mongo:27017
       - DATABASE_NAME=analytics
@@ -183,7 +183,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    build: ./src/frontend
     ports:
       - "3000:3000"
     environment:

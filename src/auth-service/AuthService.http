@@ -1,0 +1,61 @@
+@AuthService_HostAddress = http://localhost:5000
+@Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwidW5pcXVlX25hbWUiOiJ0ZXN0dXNlciIsIm5iZiI6MTc1ODkxMTYzMCwiZXhwIjoxNzU4OTE1MjMwLCJpYXQiOjE3NTg5MTE2MzAsImlzcyI6ImF1dGgtc2VydmljZS1kb2NrZXIiLCJhdWQiOiJhdXRoLXNlcnZpY2UtZG9ja2VyIn0.nxD77zIQ7S3ILDKm2o68YFuZoHAoEsJdaXIHdIMfcJs
+
+### Register a new user
+POST {{AuthService_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "TestPassword123!"
+}
+
+### Login with user credentials
+POST {{AuthService_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "TestPassword123!"
+}
+
+### Get current user info (requires JWT token)
+# First run the login request and copy the token to the @Token variable above
+GET {{AuthService_HostAddress}}/api/auth/me
+Authorization: Bearer {{Token}}
+
+### Register another user for testing
+POST {{AuthService_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "anotheruser",
+  "password": "AnotherPassword456!"
+}
+
+### Login with second user
+POST {{AuthService_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "anotheruser",
+  "password": "AnotherPassword456!"
+}
+
+### Try to register with existing username (should fail)
+POST {{AuthService_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "DifferentPassword789!"
+}
+
+### Try to login with wrong password (should fail)
+POST {{AuthService_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "WrongPassword"
+}
