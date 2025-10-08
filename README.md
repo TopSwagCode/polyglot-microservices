@@ -155,7 +155,6 @@ TODO
 
 ## 🔹 Roadmap
 
-* ADR
 * License
 * Cleanup
     * .http files
