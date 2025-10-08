@@ -2,7 +2,7 @@
 
 **Status:** Accepted  
 **Date:** 2025-10-08  
-**Decision Makers:** TopSwagCode
+**Decision Makers:** @TopSwagCode
 
 ## Context
 As discussed in the previous ADR, the project architecture is designed to keep APIs decoupled from external clients. The API Gateway serves as the unified entry point for all client interactions, handling routing, authentication, rate limiting, and request forwarding to internal microservices.  
