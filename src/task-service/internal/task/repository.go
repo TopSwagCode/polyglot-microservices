@@ -1,0 +1,12 @@
+package task
+
+import "context"
+
+// Repository defines persistence operations for Tasks.
+type Repository interface {
+	Create(ctx context.Context, t *Task) error
+	GetByID(ctx context.Context, id uint, userID string) (*Task, error)
+	ListByUser(ctx context.Context, userID string) ([]Task, error)
+	ListByProject(ctx context.Context, projectID uint, userID string) ([]Task, error)
+	Update(ctx context.Context, t *Task) error
+}

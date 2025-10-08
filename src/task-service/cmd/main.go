@@ -9,14 +9,23 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/topswagcode/task-service/internal/api"
-	"github.com/topswagcode/task-service/internal/db"
-	"github.com/topswagcode/task-service/internal/events"
-	"github.com/topswagcode/task-service/internal/services"
+	platformdb "github.com/topswagcode/task-service/internal/db"
+	plat "github.com/topswagcode/task-service/internal/platform/events"
+	proj "github.com/topswagcode/task-service/internal/project"
+	thttp "github.com/topswagcode/task-service/internal/http"
+	"github.com/topswagcode/task-service/internal/http/handlers"
+	tproj "github.com/topswagcode/task-service/internal/project"
+	ttask "github.com/topswagcode/task-service/internal/task"
 )
+
+type projectAccessorAdapter struct{ svc interface{ Get(ctx context.Context, id uint, userID string) (*proj.Project, error) } }
+
+func (a *projectAccessorAdapter) Get(ctx context.Context, id uint, userID string) (*ttask.ProjectRef, error) {
+	p, err := a.svc.Get(ctx, id, userID)
+	if err != nil { return nil, err }
+	return &ttask.ProjectRef{ID: p.ID}, nil
+}
 
 func main() {
 	// Initialize structured logger
@@ -27,69 +36,50 @@ func main() {
 
 	slog.Info("Starting Task Service")
 
-	// Initialize database
-	database, err := db.New()
+	// Initialize database (reusing existing db package for GORM bootstrap)
+	database, err := platformdb.New()
 	if err != nil {
 		slog.Error("Failed to initialize database", "error", err)
 		os.Exit(1)
 	}
 	defer database.Close()
 
-	// Initialize Kafka producer (optional - continues without it if Kafka is unavailable)
-	producer, err := events.NewProducer()
+	// Initialize Kafka publisher (optional)
+	publisher, err := plat.NewKafkaProducer()
 	if err != nil {
-		slog.Warn("Failed to initialize Kafka producer, continuing without events", "error", err)
-		producer = nil
+		slog.Warn("Kafka publisher unavailable; continuing without events", "error", err)
+		publisher = nil
+	} else {
+		defer publisher.Close()
 	}
-	if producer != nil {
-		defer producer.Close()
-	}
 
-	// Initialize services
-	taskService := services.New(database, producer)
+	// Repositories
+	projectRepo := proj.NewGormRepository(database.DB)
+	taskRepo := ttask.NewGormRepository(database.DB)
 
-	// Initialize handlers
-	handler := api.New(taskService)
+	// Services
+	projectService := tproj.NewService(projectRepo, publisher)
+	// Provide project accessor adapter
+	projectAccessor := &projectAccessorAdapter{svc: projectService}
+	taskService := ttask.NewService(taskRepo, publisher, projectAccessor)
 
-	// Setup router
-	r := chi.NewRouter()
+	// Handlers
+	projectHandlers := handlers.NewProjectHandlers(projectService)
+	taskHandlers := handlers.NewTaskHandlers(taskService)
 
-	// Middleware
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
+	// Router
+	router := thttp.NewRouter(projectHandlers, taskHandlers)
 
-	// CORS configuration
-	r.Use(cors.Handler(cors.Options{
+	// CORS configuration (apply to underlying chi router)
+	corsMw := cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "X-User-Id", "X-Username"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: false,
 		MaxAge:           300,
-	}))
-
-	// Routes
-	r.Route("/", func(r chi.Router) {
-		// Health check
-		r.Get("/health", handler.HealthCheck)
-
-		// Projects
-		r.Route("/projects", func(r chi.Router) {
-			r.Get("/", handler.GetProjects)
-			r.Post("/", handler.CreateProject)
-			r.Get("/{id}", handler.GetProject)
-		})
-
-		// Tasks
-		r.Route("/tasks", func(r chi.Router) {
-			r.Get("/", handler.GetTasks)         // Can filter by ?project_id=X
-			r.Post("/", handler.CreateTask)
-			r.Get("/{id}", handler.GetTask)
-			r.Put("/{id}", handler.UpdateTask)
-		})
 	})
+	handlerWithCORS := corsMw(router.Handler())
 
 	// Get port from environment or default to 8080
 	port := os.Getenv("PORT")
@@ -97,10 +87,7 @@ func main() {
 		port = "8080"
 	}
 
-	server := &http.Server{
-		Addr:    ":" + port,
-		Handler: r,
-	}
+	server := &http.Server{Addr: ":" + port, Handler: handlerWithCORS}
 
 	// Start server in a goroutine
 	go func() {
