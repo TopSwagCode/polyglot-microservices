@@ -21,6 +21,7 @@ func (h *TaskHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil { http.Error(w, "bad request", http.StatusBadRequest); return }
 	t, err := h.svc.Create(r.Context(), body.Title, body.Description, body.ProjectID, body.Priority, userID, username)
 	if err != nil { http.Error(w, err.Error(), http.StatusBadRequest); return }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(map[string]any{"id": t.ID, "title": t.Title, "project_id": t.ProjectID, "status": t.Status, "priority": t.Priority})
 }
 
@@ -29,6 +30,7 @@ func (h *TaskHandler) Get(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id"); id, _ := strconv.ParseUint(idStr, 10, 32)
 	t, err := h.svc.Get(r.Context(), uint(id), userID)
 	if err != nil { http.Error(w, err.Error(), http.StatusNotFound); return }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(map[string]any{"id": t.ID, "title": t.Title, "project_id": t.ProjectID, "status": t.Status, "priority": t.Priority})
 }
 
@@ -48,6 +50,7 @@ func (h *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil { http.Error(w, "bad request", http.StatusBadRequest); return }
 	t, err := h.svc.Update(r.Context(), uint(id), body.Title, body.Description, body.Status, body.Priority, userID, username)
 	if err != nil { http.Error(w, err.Error(), http.StatusInternalServerError); return }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(map[string]any{"id": t.ID, "title": t.Title, "project_id": t.ProjectID, "status": t.Status, "priority": t.Priority})
 }
 
@@ -56,5 +59,6 @@ func (h *TaskHandler) respondTasks(w http.ResponseWriter, tasks []task.Task) {
 	for _, t := range tasks {
 		resp = append(resp, map[string]any{"id": t.ID, "title": t.Title, "project_id": t.ProjectID, "status": t.Status, "priority": t.Priority})
 	}
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(resp)
 }

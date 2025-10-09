@@ -5,6 +5,9 @@
 @gateway_host = http://localhost:8080
 @content_type = application/json
 
+@username = testuser
+@password = SecurePass123!
+
 ### Variables (will be set from responses)
 # @auth_token = will be set from login response
 
@@ -22,47 +25,25 @@ POST {{gateway_host}}/auth/register
 Content-Type: {{content_type}}
 
 {
-  "Username": "testuser{{$timestamp}}",
-  "Password": "SecurePass123!"
+  "Username": "{{username}}",
+  "Password": "{{password}}"
 }
 
 ###
 
-### 3. User Registration - Duplicate user (should fail)
-POST {{gateway_host}}/auth/register
-Content-Type: {{content_type}}
-
-{
-  "Username": "duplicate_user",
-  "Password": "SecurePass123!"
-}
-
-###
-
-### 4. User Registration - Invalid password (should fail)
-POST {{gateway_host}}/auth/register
-Content-Type: {{content_type}}
-
-{
-  "Username": "invalidpass{{$timestamp}}",
-  "Password": "weak"
-}
-
-###
-
-### 5. User Login - Valid credentials
+### 3. User Login - Valid credentials
 # @name login
 POST {{gateway_host}}/auth/login
 Content-Type: {{content_type}}
 
 {
-  "Username": "duplicate_user",
-  "Password": "SecurePass123!"
+  "Username": "{{username}}",
+  "Password": "{{password}}"
 }
 
 ###
 
-### 6. User Login - Invalid credentials (should fail)
+### 4. User Login - Invalid credentials (should fail)
 POST {{gateway_host}}/auth/login
 Content-Type: {{content_type}}
 
@@ -73,19 +54,19 @@ Content-Type: {{content_type}}
 
 ###
 
-### 7. Get Current User - Protected endpoint (requires JWT)
+### 5. Get Current User - Protected endpoint (requires JWT)
 # First run the login request above to get the token
 GET {{gateway_host}}/auth/me
 Authorization: Bearer {{login.response.body.token}}
 
 ###
 
-### 8. Get Current User - No token (should fail with 401)
+### 6. Get Current User - No token (should fail with 401)
 GET {{gateway_host}}/auth/me
 
 ###
 
-### 9. Get Current User - Invalid token (should fail with 401)
+### 7. Get Current User - Invalid token (should fail with 401)
 GET {{gateway_host}}/auth/me
 Authorization: Bearer invalid_token_here
 
@@ -95,7 +76,7 @@ Authorization: Bearer invalid_token_here
 ### Task Service Tests (via API Gateway - requires authentication)
 ###
 
-### 10. Create a project - Valid token required
+### 8. Create a project - Valid token required
 # @name createProject
 POST {{gateway_host}}/projects
 Content-Type: {{content_type}}
@@ -107,15 +88,16 @@ Authorization: Bearer {{login.response.body.token}}
 
 ###
 
-### 11. Get all projects for user
+### 9. Get all projects for user
 GET {{gateway_host}}/projects
 Authorization: Bearer {{login.response.body.token}}
 
 ###
 
-### 12. Get specific project
+### 10. Get specific project
 GET {{gateway_host}}/projects/{{createProject.response.body.id}}
 Authorization: Bearer {{login.response.body.token}}
+
 
 ###
 

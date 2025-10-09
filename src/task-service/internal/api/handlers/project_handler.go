@@ -20,6 +20,7 @@ func (h *ProjectHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil { http.Error(w, "bad request", http.StatusBadRequest); return }
 	p, err := h.svc.Create(r.Context(), body.Name, userID, username)
 	if err != nil { http.Error(w, err.Error(), http.StatusBadRequest); return }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(map[string]any{"id": p.ID, "name": p.Name})
 }
 
@@ -28,6 +29,7 @@ func (h *ProjectHandler) Get(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id"); id, _ := strconv.ParseUint(idStr, 10, 32)
 	p, err := h.svc.Get(r.Context(), uint(id), userID)
 	if err != nil { http.Error(w, err.Error(), http.StatusNotFound); return }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(map[string]any{"id": p.ID, "name": p.Name})
 }
 
@@ -37,5 +39,6 @@ func (h *ProjectHandler) List(w http.ResponseWriter, r *http.Request) {
 	if err != nil { http.Error(w, err.Error(), http.StatusInternalServerError); return }
 	resp := make([]map[string]any, 0, len(ps))
 	for _, p := range ps { resp = append(resp, map[string]any{"id": p.ID, "name": p.Name}) }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(resp)
 }

@@ -22,6 +22,7 @@ func (h *TaskHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil { http.Error(w, "bad request", http.StatusBadRequest); return }
 	t, err := h.svc.Create(r.Context(), req.Title, req.Description, req.ProjectID, req.Priority, userID, username)
 	if err != nil { status := http.StatusBadRequest; if err == task.ErrProjectAccess { status = http.StatusNotFound }; http.Error(w, err.Error(), status); return }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(dto.TaskResponse{ID: t.ID, Title: t.Title, ProjectID: t.ProjectID, Status: t.Status, Priority: t.Priority})
 }
 
@@ -32,6 +33,7 @@ func (h *TaskHandlers) Get(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.ParseUint(idStr, 10, 32)
 	t, err := h.svc.Get(r.Context(), uint(id), userID)
 	if err != nil { status := http.StatusInternalServerError; if err == task.ErrNotFound { status = http.StatusNotFound }; http.Error(w, err.Error(), status); return }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(dto.TaskResponse{ID: t.ID, Title: t.Title, ProjectID: t.ProjectID, Status: t.Status, Priority: t.Priority})
 }
 
@@ -45,13 +47,15 @@ func (h *TaskHandlers) List(w http.ResponseWriter, r *http.Request) {
 		if err != nil { status := http.StatusInternalServerError; if err == task.ErrProjectAccess { status = http.StatusNotFound }; http.Error(w, err.Error(), status); return }
 		resp := make([]dto.TaskResponse, 0, len(ts))
 		for _, t := range ts { resp = append(resp, dto.TaskResponse{ID: t.ID, Title: t.Title, ProjectID: t.ProjectID, Status: t.Status, Priority: t.Priority}) }
-		json.NewEncoder(w).Encode(resp)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	json.NewEncoder(w).Encode(resp)
 		return
 	}
 	ts, err := h.svc.List(r.Context(), userID)
 	if err != nil { http.Error(w, err.Error(), http.StatusInternalServerError); return }
 	resp := make([]dto.TaskResponse, 0, len(ts))
 	for _, t := range ts { resp = append(resp, dto.TaskResponse{ID: t.ID, Title: t.Title, ProjectID: t.ProjectID, Status: t.Status, Priority: t.Priority}) }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(resp)
 }
 
@@ -65,5 +69,6 @@ func (h *TaskHandlers) Update(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil { http.Error(w, "bad request", http.StatusBadRequest); return }
 	t, err := h.svc.Update(r.Context(), uint(id), req.Title, req.Description, req.Status, req.Priority, userID, username)
 	if err != nil { status := http.StatusInternalServerError; if err == task.ErrNotFound { status = http.StatusNotFound }; http.Error(w, err.Error(), status); return }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(dto.TaskResponse{ID: t.ID, Title: t.Title, ProjectID: t.ProjectID, Status: t.Status, Priority: t.Priority})
 }

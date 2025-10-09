@@ -20,6 +20,7 @@ func (h *ProjectHandlers) Create(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil { http.Error(w, "bad request", http.StatusBadRequest); return }
 	p, err := h.svc.Create(r.Context(), req.Name, userID, username)
 	if err != nil { http.Error(w, err.Error(), http.StatusBadRequest); return }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(dto.ProjectResponse{ID: p.ID, Name: p.Name})
 }
 
@@ -28,6 +29,7 @@ func (h *ProjectHandlers) Get(w http.ResponseWriter, r *http.Request, id uint) {
 	if userID == "" { http.Error(w, "unauthorized", http.StatusUnauthorized); return }
 	p, err := h.svc.Get(r.Context(), id, userID)
 	if err != nil { status := http.StatusInternalServerError; if err == project.ErrNotFound { status = http.StatusNotFound }; http.Error(w, err.Error(), status); return }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(dto.ProjectResponse{ID: p.ID, Name: p.Name})
 }
 
@@ -38,5 +40,6 @@ func (h *ProjectHandlers) List(w http.ResponseWriter, r *http.Request) {
 	if err != nil { http.Error(w, err.Error(), http.StatusInternalServerError); return }
 	resp := make([]dto.ProjectResponse, 0, len(ps))
 	for _, p := range ps { resp = append(resp, dto.ProjectResponse{ID: p.ID, Name: p.Name}) }
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	json.NewEncoder(w).Encode(resp)
 }
