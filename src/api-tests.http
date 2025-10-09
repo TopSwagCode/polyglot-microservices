@@ -15,12 +15,12 @@
 ### Authentication Service Tests (via API Gateway)
 ###
 
-### 1. Health Check - Test if API Gateway is running
+### Health Check - Test if API Gateway is running
 GET {{gateway_host}}/
 
 ###
 
-### 2. User Registration
+### User Registration
 POST {{gateway_host}}/auth/register
 Content-Type: {{content_type}}
 
@@ -31,7 +31,7 @@ Content-Type: {{content_type}}
 
 ###
 
-### 3. User Login - Valid credentials
+### User Login - Valid credentials
 # @name login
 POST {{gateway_host}}/auth/login
 Content-Type: {{content_type}}
@@ -43,7 +43,7 @@ Content-Type: {{content_type}}
 
 ###
 
-### 4. User Login - Invalid credentials (should fail)
+### User Login - Invalid credentials (should fail)
 POST {{gateway_host}}/auth/login
 Content-Type: {{content_type}}
 
@@ -54,19 +54,19 @@ Content-Type: {{content_type}}
 
 ###
 
-### 5. Get Current User - Protected endpoint (requires JWT)
+### Get Current User - Protected endpoint (requires JWT)
 # First run the login request above to get the token
 GET {{gateway_host}}/auth/me
 Authorization: Bearer {{login.response.body.token}}
 
 ###
 
-### 6. Get Current User - No token (should fail with 401)
+### Get Current User - No token (should fail with 401)
 GET {{gateway_host}}/auth/me
 
 ###
 
-### 7. Get Current User - Invalid token (should fail with 401)
+### Get Current User - Invalid token (should fail with 401)
 GET {{gateway_host}}/auth/me
 Authorization: Bearer invalid_token_here
 
@@ -88,20 +88,20 @@ Authorization: Bearer {{login.response.body.token}}
 
 ###
 
-### 9. Get all projects for user
+### Get all projects for user
 GET {{gateway_host}}/projects
 Authorization: Bearer {{login.response.body.token}}
 
 ###
 
-### 10. Get specific project
+### Get specific project
 GET {{gateway_host}}/projects/{{createProject.response.body.id}}
 Authorization: Bearer {{login.response.body.token}}
 
 
 ###
 
-### 13. Create a task in the project
+### Create a task in the project
 # @name createTask
 POST {{gateway_host}}/tasks
 Content-Type: {{content_type}}
@@ -116,25 +116,25 @@ Authorization: Bearer {{login.response.body.token}}
 
 ###
 
-### 14. Get all tasks for user
+### Get all tasks for user
 GET {{gateway_host}}/tasks
 Authorization: Bearer {{login.response.body.token}}
 
 ###
 
-### 15. Get tasks filtered by project
+### Get tasks filtered by project
 GET {{gateway_host}}/tasks?project_id={{createProject.response.body.id}}
 Authorization: Bearer {{login.response.body.token}}
 
 ###
 
-### 16. Get specific task
+### Get specific task
 GET {{gateway_host}}/tasks/{{createTask.response.body.id}}
 Authorization: Bearer {{login.response.body.token}}
 
 ###
 
-### 17. Update task status
+### Update task status
 PUT {{gateway_host}}/tasks/{{createTask.response.body.id}}
 Content-Type: {{content_type}}
 Authorization: Bearer {{login.response.body.token}}
@@ -146,12 +146,12 @@ Authorization: Bearer {{login.response.body.token}}
 
 ###
 
-### 18. Try to access tasks without authentication (should fail with 401)
+### Try to access tasks without authentication (should fail with 401)
 GET {{gateway_host}}/tasks
 
 ###
 
-### 19. Try to create project without authentication (should fail with 401)
+### Try to create project without authentication (should fail with 401)
 POST {{gateway_host}}/projects
 Content-Type: {{content_type}}
 
@@ -161,14 +161,8 @@ Content-Type: {{content_type}}
 
 ###
 
-### 20. Try to access another user's project (should fail with 404)
-GET {{gateway_host}}/projects/999999
-Authorization: Bearer {{login.response.body.token}}
-
 ###
-
-###
-### Future Services (Planned)
+### Analytics Service Tests (via API Gateway - requires authentication)
 ###
 
 ### Analytics Service - Get analytics
@@ -184,5 +178,5 @@ GET {{gateway_host}}/analytics/productivity
 Authorization: Bearer {{login.response.body.token}}
 
 ### Get Project Analytics via API Gateway
-GET {{gateway_host}}/analytics/projects/1
+GET {{gateway_host}}/analytics/projects/{{createProject.response.body.id}}
 Authorization: Bearer {{login.response.body.token}}

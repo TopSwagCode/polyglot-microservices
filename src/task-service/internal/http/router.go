@@ -9,7 +9,7 @@ import (
 	"github.com/topswagcode/task-service/internal/http/handlers"
 )
 
-type Router struct { mux *chi.Mux }
+type Router struct{ mux *chi.Mux }
 
 func NewRouter(ph *handlers.ProjectHandlers, th *handlers.TaskHandlers) *Router {
 	mux := chi.NewRouter()
