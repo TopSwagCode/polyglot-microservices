@@ -9,10 +9,10 @@
 	async function submit() {
 		localError = null;
 		try {
-			await auth.login(username.trim(), password);
-			goto('/dashboard');
+			const success = await auth.login(username.trim(), password);
+			if (success) goto('/dashboard');
 		} catch (e: any) {
-			localError = e.message || 'Login failed';
+			localError = e?.message || 'Login failed';
 		}
 	}
 </script>

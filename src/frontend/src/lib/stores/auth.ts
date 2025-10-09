@@ -44,46 +44,64 @@ function createAuthStore() {
 	}
 
 	async function login(username: string, password: string) {
-		update(s => ({ ...s, loading: true, error: null }));
-		// Attempt real backend first
+		update((s: AuthState) => ({ ...s, loading: true, error: null }));
 		try {
 			const res = await fetch(`${apiBase}/auth/login`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ username, password })
 			});
-			if (!res.ok) throw new Error(`Login failed (${res.status})`);
+			if (!res.ok) {
+				if (res.status === 401 || res.status === 400) {
+					// Invalid credentials – do not fallback, surface error
+					const detail = await safeParseError(res);
+					update((s: AuthState) => ({ ...s, error: detail || 'Invalid credentials' }));
+					return false;
+				}
+				// Other server errors
+				const detail = await safeParseError(res);
+				throw new Error(detail || `Login failed (${res.status})`);
+			}
 			const data = await res.json();
-			// Expect shape: { token: string, user: { id, username, email? } }
 			persistSession(data.token, data.user ?? { id: data.userId || 'me', username });
 			return true;
 		} catch (err: any) {
-			// Fallback mock mode (no backend yet)
-			console.info('Falling back to mock auth login');
-			const mockUser: AuthUser = { id: crypto.randomUUID(), username };
-			persistSession('mock-token', mockUser);
-			return true;
+			const message = err?.message || 'Unable to login';
+			update((s: AuthState) => ({ ...s, error: message }));
+			return false;
 		} finally {
-			update(s => ({ ...s, loading: false }));
+			update((s: AuthState) => ({ ...s, loading: false }));
+		}
+	}
+
+	async function safeParseError(res: Response): Promise<string | null> {
+		try {
+			const data = await res.json();
+			if (typeof data === 'string') return data;
+			if (data?.error) return data.error;
+			if (data?.message) return data.message;
+			return null;
+		} catch {
+			return null;
 		}
 	}
 
 	async function loadUser() {
 		// If already present, skip
 		let current: AuthState | undefined;
-		subscribe(v => (current = v))();
+		subscribe((v: AuthState) => (current = v))();
 		if (!current?.token || current.user) return;
-		update(s => ({ ...s, loading: true }));
+		update((s: AuthState) => ({ ...s, loading: true }));
 		try {
 			const res = await fetch(`${apiBase}/auth/me`, { headers: { Authorization: `Bearer ${current!.token}` } });
 			if (!res.ok) throw new Error('Failed to load user');
 			const user = await res.json();
-			update(s => ({ ...s, user, error: null }));
+			update((s: AuthState) => ({ ...s, user, error: null }));
 			if (browser) localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
 		} catch (err: any) {
-			update(s => ({ ...s, error: err.message || 'Failed to load user' }));
+			update((s: AuthState) => ({ ...s, error: err.message || 'Failed to load user' }));
 		} finally {
-			update(s => ({ ...s, loading: false }));
+			update((s: AuthState) => ({ ...s, loading: false }));
 		}
 	}
 
